@@ -1,0 +1,25 @@
+# AdminFacile TODO
+
+- [x] Creer `ROADMAP.md`.
+- [x] Creer `TODO.md`.
+- [x] Creer la structure Next.js App Router.
+- [x] Declarer les dependances MVP.
+- [x] Ajouter le design global TailwindCSS.
+- [x] Configurer Supabase auth et helpers serveur/client.
+- [x] Creer les pages publiques.
+- [x] Creer le dashboard prive.
+- [x] Creer le formulaire de nouvelle demarche.
+- [x] Connecter OpenAI via route serveur.
+- [x] Creer la page resultat.
+- [x] Ajouter l'export PDF.
+- [x] Preparer Stripe Checkout et webhook.
+- [x] Creer le coffre-fort documents.
+- [x] Creer les pages legales.
+- [x] Ajouter le schema SQL Supabase.
+- [x] Ajouter `.env.example`.
+- [x] Rediger le README.
+- [ ] Installer les dependances dans un environnement Node accessible.
+- [ ] Lancer `npm run lint`.
+- [ ] Lancer `npm run typecheck`.
+- [ ] Lancer `npm run build`.
+- [ ] Tester en mobile dans un navigateur.

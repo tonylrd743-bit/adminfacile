@@ -7,6 +7,19 @@ import { Button } from "@/components/button";
 import { popularRequestCategories, popularRequestTemplates } from "@/data/popular-requests";
 import type { PopularRequestTemplate } from "@/data/popular-requests";
 
+const categoryDescriptions: Record<string, string> = {
+  "France Travail": "Creation d'entreprise, allocations, rendez-vous conseiller et contestations.",
+  CAF: "RSA, prime d'activite, APL, changements de situation et trop-percus.",
+  "URSSAF / Micro-entrepreneur": "Cotisations, declarations, attestations et regularisation de compte.",
+  Logement: "Logement social, proprietaire, caution, loyer et attestations.",
+  "CPAM / Sante": "Remboursements, droits, CSS et changements de situation sante.",
+  Impots: "Delais de paiement, contestations, remises et corrections fiscales.",
+  Banque: "Frais, virements, cloture de compte, prelevements et credit.",
+  "Employeur / Travail": "Attestations, salaire, rupture conventionnelle, demission et conges.",
+  "Prefecture / ANTS": "Titre de sejour, carte grise, permis, passeport et CNI.",
+  Retraite: "Releve de carriere, correction, rendez-vous, pension et reversion."
+};
+
 export function PopularRequestTemplates({
   onSelect,
   compact = false,
@@ -106,7 +119,9 @@ export function PopularRequestTemplates({
             <section className="space-y-4" key={group.category}>
               <div>
                 <h3 className="text-xl font-semibold tracking-tight text-slate-950">{group.category}</h3>
-                <p className="mt-1 text-sm leading-6 text-slate-500">{group.templates.length} prompts prêts à compléter</p>
+                <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-500">
+                  {categoryDescriptions[group.category] ?? `${group.templates.length} prompts prêts à compléter.`}
+                </p>
               </div>
               <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 {group.templates.map((template) => (

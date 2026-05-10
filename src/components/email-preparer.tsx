@@ -62,14 +62,14 @@ export function EmailPreparer({ result, formData }: { result: AiResult; formData
         <div className="flex w-full flex-col gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-4">
           <Button className="min-h-[44px] w-full" onClick={() => copyEmail()} type="button" variant="outline">
             {copied === "email" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-            {copied === "email" ? "Email copié" : "Copier l'email complet"}
+            {copied === "email" ? "Email copié" : "Copier l'email"}
           </Button>
           <a
             className="focus-ring inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-50"
             href={email.mailtoUrl}
           >
             <Mail className="h-4 w-4" />
-            Ouvrir dans Mail iPhone
+            Ouvrir dans Mail
           </a>
           <a
             className="focus-ring inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"

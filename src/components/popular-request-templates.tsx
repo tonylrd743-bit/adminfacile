@@ -1,18 +1,22 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Search, Sparkles } from "lucide-react";
-import { Button, ButtonLink } from "@/components/button";
+import { Button } from "@/components/button";
 import { popularRequestCategories, popularRequestTemplates } from "@/data/popular-requests";
 import type { PopularRequestTemplate } from "@/data/popular-requests";
 
 export function PopularRequestTemplates({
   onSelect,
-  compact = false
+  compact = false,
+  redirectOnSelect = false
 }: {
   onSelect?: (template: PopularRequestTemplate) => void;
   compact?: boolean;
+  redirectOnSelect?: boolean;
 }) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Toutes");
 
@@ -25,8 +29,21 @@ export function PopularRequestTemplates({
     });
   }, [category, query]);
 
+  function selectTemplate(template: PopularRequestTemplate) {
+    if (redirectOnSelect) {
+      sessionStorage.setItem("adminfacile:selected-template", template.id);
+      router.push("/dashboard/new");
+      return;
+    }
+    if (onSelect) {
+      onSelect(template);
+      return;
+    }
+    router.push(`/dashboard/new?template=${template.id}`);
+  }
+
   return (
-    <section className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+    <section className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm sm:p-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase text-blue-600">Demandes populaires</p>
@@ -58,7 +75,7 @@ export function PopularRequestTemplates({
         </div>
       </div>
 
-      <div className={compact ? "mt-6 grid gap-4 md:grid-cols-2" : "mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3"}>
+      <div className={compact ? "mt-6 grid gap-4 md:grid-cols-2" : "mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3"}>
         {filteredTemplates.map((template) => (
           <article className="flex min-w-0 flex-col rounded-3xl border border-slate-200 bg-slate-50 p-4" key={template.id}>
             <div className="flex flex-wrap items-center gap-2">
@@ -75,17 +92,10 @@ export function PopularRequestTemplates({
               {template.promptTemplate.split("\n").slice(0, 3).join(" ")}
             </div>
             <div className="mt-4">
-              {onSelect ? (
-                <Button className="w-full" onClick={() => onSelect(template)} type="button">
-                  <Sparkles className="h-4 w-4" />
-                  Utiliser ce modèle
-                </Button>
-              ) : (
-                <ButtonLink className="w-full" href={`/dashboard/new?template=${template.id}`}>
-                  <Sparkles className="h-4 w-4" />
-                  Utiliser ce modèle
-                </ButtonLink>
-              )}
+              <Button className="w-full" onClick={() => selectTemplate(template)} type="button">
+                <Sparkles className="h-4 w-4" />
+                Utiliser ce modèle
+              </Button>
             </div>
           </article>
         ))}

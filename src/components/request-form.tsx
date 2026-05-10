@@ -25,9 +25,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/button";
-import { PopularRequestTemplates } from "@/components/popular-request-templates";
 import { findPopularRequestTemplate } from "@/data/popular-requests";
-import type { PopularRequestTemplate } from "@/data/popular-requests";
 import { getProcedureCategories, procedures } from "@/lib/procedures";
 import type { ProcedureField } from "@/lib/procedures";
 
@@ -56,25 +54,25 @@ const iconMap: Record<string, LucideIcon> = {
   UserRoundSearch
 };
 
+type InitialFormState = {
+  selectedProcedureId: string;
+  issueValue: string;
+  availableDocumentsValue: string;
+  appliedTemplateTitle: string | null;
+};
+
 export function RequestForm({ email, initialTemplateId }: { email: string; initialTemplateId?: string }) {
   const router = useRouter();
   const categories = useMemo(() => getProcedureCategories(), []);
-  const initialTemplate = useMemo(() => findPopularRequestTemplate(initialTemplateId), [initialTemplateId]);
-  const [selectedProcedureId, setSelectedProcedureId] = useState<string>(initialTemplate?.requestType ?? procedures[0].id);
+  const [initialState] = useState<InitialFormState>(() => getInitialFormState(initialTemplateId));
+  const [selectedProcedureId, setSelectedProcedureId] = useState<string>(initialState.selectedProcedureId);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [issueValue, setIssueValue] = useState(initialTemplate?.promptTemplate ?? "");
-  const [availableDocumentsValue, setAvailableDocumentsValue] = useState(initialTemplate?.requiredDocuments.join("\n") ?? "");
-  const [appliedTemplateTitle, setAppliedTemplateTitle] = useState<string | null>(initialTemplate?.title ?? null);
+  const [issueValue, setIssueValue] = useState(initialState.issueValue);
+  const [availableDocumentsValue, setAvailableDocumentsValue] = useState(initialState.availableDocumentsValue);
+  const [appliedTemplateTitle] = useState<string | null>(initialState.appliedTemplateTitle);
 
   const selectedProcedure = procedures.find((procedure) => procedure.id === selectedProcedureId) ?? procedures[0];
-
-  function applyTemplate(template: PopularRequestTemplate) {
-    setSelectedProcedureId(template.requestType);
-    setIssueValue(template.promptTemplate);
-    setAvailableDocumentsValue(template.requiredDocuments.join("\n"));
-    setAppliedTemplateTitle(template.title);
-  }
 
   async function onSubmit(formData: FormData) {
     setLoading(true);
@@ -133,10 +131,9 @@ export function RequestForm({ email, initialTemplateId }: { email: string; initi
 
   return (
     <div className="space-y-6">
-      <PopularRequestTemplates compact onSelect={applyTemplate} />
       {appliedTemplateTitle ? (
         <p className="rounded-2xl bg-blue-50 px-4 py-3 text-sm font-medium text-blue-800">
-          Modèle appliqué : {appliedTemplateTitle}. Complétez les informations entre parenthèses.
+          Modèle appliqué, complétez les informations entre parenthèses. ({appliedTemplateTitle})
         </p>
       ) : null}
       <form action={onSubmit} className="min-w-0 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
@@ -399,4 +396,29 @@ function normalizeFormValue(value: FormDataEntryValue | null, type: ProcedureFie
     return Number(value ?? 0);
   }
   return String(value ?? "");
+}
+
+function getInitialFormState(initialTemplateId?: string): InitialFormState {
+  const template = getInitialTemplate(initialTemplateId);
+
+  return {
+    selectedProcedureId: template?.requestType ?? procedures[0].id,
+    issueValue: template?.promptTemplate ?? "",
+    availableDocumentsValue: template?.requiredDocuments.join("\n") ?? "",
+    appliedTemplateTitle: template?.title ?? null
+  };
+}
+
+function getInitialTemplate(initialTemplateId?: string) {
+  const urlTemplate = findPopularRequestTemplate(initialTemplateId);
+  if (urlTemplate) return urlTemplate;
+
+  if (typeof window === "undefined") return undefined;
+
+  const storedTemplateId = sessionStorage.getItem("adminfacile:selected-template");
+  const storedTemplate = findPopularRequestTemplate(storedTemplateId);
+  if (storedTemplate) {
+    sessionStorage.removeItem("adminfacile:selected-template");
+  }
+  return storedTemplate;
 }

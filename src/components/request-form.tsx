@@ -133,7 +133,7 @@ export function RequestForm({ email, initialTemplateId }: { email: string; initi
     <div className="space-y-6">
       {appliedTemplateTitle ? (
         <p className="rounded-2xl bg-blue-50 px-4 py-3 text-sm font-medium text-blue-800">
-          Modèle appliqué, complétez les informations entre parenthèses. ({appliedTemplateTitle})
+          Prompt appliqué, complétez les informations entre parenthèses. ({appliedTemplateTitle})
         </p>
       ) : null}
       <form action={onSubmit} className="min-w-0 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">

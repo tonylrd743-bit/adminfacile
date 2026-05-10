@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 const nav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/new", label: "Nouvelle démarche", icon: FilePlus2 },
-  { href: "/dashboard/templates", label: "Demandes populaires", icon: LibraryBig },
+  { href: "/dashboard/prompts", label: "Prompts pré-écrits", icon: LibraryBig },
   { href: "/dashboard/documents", label: "Mes documents", icon: FolderLock },
   { href: "/dashboard/account", label: "Mon compte", icon: UserRound }
 ];

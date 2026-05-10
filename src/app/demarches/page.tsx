@@ -20,6 +20,7 @@ import type { LucideIcon } from "lucide-react";
 import { ButtonLink } from "@/components/button";
 import { DisclaimerBox } from "@/components/disclaimer-box";
 import { FeatureCard } from "@/components/feature-card";
+import { PopularRequestTemplates } from "@/components/popular-request-templates";
 import { SectionHeading } from "@/components/section-heading";
 import { getProcedureCategories, procedures } from "@/lib/procedures";
 
@@ -51,6 +52,9 @@ export default function ProceduresPage() {
         text="AdminFacile prépare des dossiers et courriers administratifs fréquents, avec un assistant prudent et spécialisé pour chaque situation."
         title="15 démarches utiles pour avancer plus vite"
       />
+      <div className="mt-12">
+        <PopularRequestTemplates />
+      </div>
       <div className="mt-12 space-y-12">
         {categories.map((category) => (
           <section key={category}>

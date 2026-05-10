@@ -25,6 +25,9 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/button";
+import { PopularRequestTemplates } from "@/components/popular-request-templates";
+import { findPopularRequestTemplate } from "@/data/popular-requests";
+import type { PopularRequestTemplate } from "@/data/popular-requests";
 import { getProcedureCategories, procedures } from "@/lib/procedures";
 import type { ProcedureField } from "@/lib/procedures";
 
@@ -53,14 +56,25 @@ const iconMap: Record<string, LucideIcon> = {
   UserRoundSearch
 };
 
-export function RequestForm({ email }: { email: string }) {
+export function RequestForm({ email, initialTemplateId }: { email: string; initialTemplateId?: string }) {
   const router = useRouter();
   const categories = useMemo(() => getProcedureCategories(), []);
-  const [selectedProcedureId, setSelectedProcedureId] = useState<string>(procedures[0].id);
+  const initialTemplate = useMemo(() => findPopularRequestTemplate(initialTemplateId), [initialTemplateId]);
+  const [selectedProcedureId, setSelectedProcedureId] = useState<string>(initialTemplate?.requestType ?? procedures[0].id);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [issueValue, setIssueValue] = useState(initialTemplate?.promptTemplate ?? "");
+  const [availableDocumentsValue, setAvailableDocumentsValue] = useState(initialTemplate?.requiredDocuments.join("\n") ?? "");
+  const [appliedTemplateTitle, setAppliedTemplateTitle] = useState<string | null>(initialTemplate?.title ?? null);
 
   const selectedProcedure = procedures.find((procedure) => procedure.id === selectedProcedureId) ?? procedures[0];
+
+  function applyTemplate(template: PopularRequestTemplate) {
+    setSelectedProcedureId(template.requestType);
+    setIssueValue(template.promptTemplate);
+    setAvailableDocumentsValue(template.requiredDocuments.join("\n"));
+    setAppliedTemplateTitle(template.title);
+  }
 
   async function onSubmit(formData: FormData) {
     setLoading(true);
@@ -118,7 +132,14 @@ export function RequestForm({ email }: { email: string }) {
   }
 
   return (
-    <form action={onSubmit} className="min-w-0 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+    <div className="space-y-6">
+      <PopularRequestTemplates compact onSelect={applyTemplate} />
+      {appliedTemplateTitle ? (
+        <p className="rounded-2xl bg-blue-50 px-4 py-3 text-sm font-medium text-blue-800">
+          Modèle appliqué : {appliedTemplateTitle}. Complétez les informations entre parenthèses.
+        </p>
+      ) : null}
+      <form action={onSubmit} className="min-w-0 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
       <div className="border-b border-slate-200 bg-slate-50 p-4 sm:p-6">
         <div className="grid gap-3 sm:grid-cols-4">
           {steps.map((step, index) => (
@@ -214,13 +235,17 @@ export function RequestForm({ email }: { email: string }) {
             help="Décrivez le blocage, votre objectif ou la demande à formuler."
             label="Problème rencontré ou demande principale"
             name="issue"
+            onChange={setIssueValue}
             required
+            value={issueValue}
           />
           <TextArea
             help="Exemple : avis d'imposition, bulletins de salaire, bail, attestation, RIB, courrier reçu."
             label="Documents déjà disponibles"
             name="availableDocuments"
+            onChange={setAvailableDocumentsValue}
             required
+            value={availableDocumentsValue}
           />
         </FormSection>
 
@@ -253,7 +278,8 @@ export function RequestForm({ email }: { email: string }) {
           {loading ? "Génération en cours..." : "Générer mon dossier"}
         </Button>
       </div>
-    </form>
+      </form>
+    </div>
   );
 }
 
@@ -338,11 +364,31 @@ function Select({
   );
 }
 
-function TextArea({ label, help, name, required }: { label: string; help: string; name: string; required?: boolean }) {
+function TextArea({
+  label,
+  help,
+  name,
+  required,
+  value,
+  onChange
+}: {
+  label: string;
+  help: string;
+  name: string;
+  required?: boolean;
+  value?: string;
+  onChange?: (value: string) => void;
+}) {
   return (
     <label className="block space-y-2 text-sm font-semibold text-slate-800 sm:col-span-2">
       {label}
-      <textarea className={`${inputClass} min-h-36`} name={name} required={required} />
+      <textarea
+        className={`${inputClass} min-h-36`}
+        name={name}
+        onChange={onChange ? (event) => onChange(event.target.value) : undefined}
+        required={required}
+        value={value}
+      />
       <span className="block text-sm font-normal leading-6 text-slate-500">{help}</span>
     </label>
   );

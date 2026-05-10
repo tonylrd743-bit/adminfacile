@@ -1,7 +1,12 @@
 import { RequestForm } from "@/components/request-form";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function NewRequestPage() {
+export default async function NewRequestPage({
+  searchParams
+}: {
+  searchParams: Promise<{ template?: string }>;
+}) {
+  const { template } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user }
@@ -17,7 +22,7 @@ export default async function NewRequestPage() {
           checklist, une lettre, les documents à préparer et les prochaines étapes.
         </p>
       </div>
-      <RequestForm email={user?.email ?? ""} />
+      <RequestForm email={user?.email ?? ""} initialTemplateId={template} />
     </div>
   );
 }

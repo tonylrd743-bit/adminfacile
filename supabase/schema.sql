@@ -21,9 +21,6 @@ create table if not exists public.requests (
 alter table public.requests drop constraint if exists requests_request_type_check;
 alter table public.requests add constraint requests_request_type_check check (
   request_type in (
-    'CAF',
-    'RSA',
-    'Prime d''activite',
     'caf',
     'rsa',
     'prime-activite',
@@ -38,7 +35,10 @@ alter table public.requests add constraint requests_request_type_check check (
     'resiliation',
     'contestation',
     'lettre-proprietaire',
-    'aide-financiere'
+    'aide-financiere',
+    'CAF',
+    'RSA',
+    'Prime d''activite'
   )
 );
 

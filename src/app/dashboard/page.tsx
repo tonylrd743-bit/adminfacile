@@ -21,17 +21,17 @@ export default async function DashboardPage() {
   const latest = requests?.slice(0, 5) ?? [];
 
   return (
-    <div className="space-y-8">
-      <section className="rounded-[2rem] bg-slate-950 p-6 text-white shadow-sm sm:p-8">
+    <div className="min-w-0 space-y-8">
+      <section className="rounded-[2rem] bg-slate-950 p-5 text-white shadow-sm sm:p-8">
         <p className="text-sm font-semibold text-blue-200">Bonjour {user?.email}</p>
         <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Votre tableau de bord</h1>
+          <div className="min-w-0">
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-4xl">Votre tableau de bord</h1>
             <p className="mt-3 max-w-2xl leading-8 text-slate-300">
               Lancez une démarche, retrouvez vos dossiers générés et gardez vos documents administratifs au même endroit.
             </p>
           </div>
-          <ButtonLink href="/dashboard/new">
+          <ButtonLink className="w-full sm:w-auto" href="/dashboard/new">
             <FilePlus2 className="h-4 w-4" />
             Nouvelle démarche
           </ButtonLink>
@@ -67,7 +67,7 @@ export default async function DashboardPage() {
             <p className="text-sm font-semibold text-blue-600">Suivi</p>
             <h2 className="text-xl font-semibold text-slate-950">Dernières démarches</h2>
           </div>
-          <ButtonLink href="/dashboard/new" variant="outline">
+          <ButtonLink className="w-full sm:w-auto" href="/dashboard/new" variant="outline">
             Créer un dossier
           </ButtonLink>
         </div>
@@ -77,8 +77,8 @@ export default async function DashboardPage() {
               const result = normalizeAiResult(request.ai_result);
               const formData = request.form_data as unknown as RequestFormData;
               return (
-                <article className="grid gap-4 p-5 sm:grid-cols-[1fr_auto] sm:items-center" key={request.id}>
-                  <div>
+                <article className="grid min-w-0 gap-4 p-5 sm:grid-cols-[1fr_auto] sm:items-center" key={request.id}>
+                  <div className="min-w-0">
                     <h3 className="font-semibold text-slate-950">{result.titre || getProcedureLabel(request.request_type)}</h3>
                     <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-500">
                       <span>{getProcedureLabel(request.request_type)}</span>
@@ -90,11 +90,11 @@ export default async function DashboardPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                    <ButtonLink href={`/dashboard/requests/${request.id}`} variant="outline">
+                  <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                    <ButtonLink className="w-full sm:w-auto" href={`/dashboard/requests/${request.id}`} variant="outline">
                       Ouvrir
                     </ButtonLink>
-                    <PdfButton createdAt={request.created_at} formData={formData} result={result} />
+                    <PdfButton className="w-full sm:w-auto" createdAt={request.created_at} formData={formData} result={result} />
                   </div>
                 </article>
               );
@@ -107,7 +107,7 @@ export default async function DashboardPage() {
               Créez votre premier dossier pour obtenir une checklist, une lettre et un PDF exportable.
             </p>
             <div className="mt-5">
-              <ButtonLink href="/dashboard/new">Créer ma première démarche</ButtonLink>
+              <ButtonLink className="w-full sm:w-auto" href="/dashboard/new">Créer ma première démarche</ButtonLink>
             </div>
           </div>
         )}

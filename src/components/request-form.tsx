@@ -118,8 +118,8 @@ export function RequestForm({ email }: { email: string }) {
   }
 
   return (
-    <form action={onSubmit} className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-      <div className="border-b border-slate-200 bg-slate-50 p-5 sm:p-6">
+    <form action={onSubmit} className="min-w-0 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+      <div className="border-b border-slate-200 bg-slate-50 p-4 sm:p-6">
         <div className="grid gap-3 sm:grid-cols-4">
           {steps.map((step, index) => (
             <div className="flex items-center gap-3 rounded-2xl bg-white p-3 ring-1 ring-slate-200" key={step}>
@@ -132,7 +132,7 @@ export function RequestForm({ email }: { email: string }) {
         </div>
       </div>
 
-      <div className="space-y-8 p-5 sm:p-8">
+      <div className="space-y-8 p-4 sm:p-8">
         <FormSection
           eyebrow="Étape 1"
           text="Ces informations servent à personnaliser le résumé et la lettre générée."
@@ -163,7 +163,7 @@ export function RequestForm({ email }: { email: string }) {
                       return (
                         <label
                           className={[
-                            "cursor-pointer rounded-3xl border p-4 transition",
+                            "min-w-0 cursor-pointer rounded-3xl border p-4 transition",
                             selected
                               ? "border-blue-600 bg-blue-50 ring-4 ring-blue-100"
                               : "border-slate-200 bg-white hover:border-blue-200 hover:bg-slate-50"
@@ -178,11 +178,11 @@ export function RequestForm({ email }: { email: string }) {
                             type="radio"
                             value={procedure.id}
                           />
-                          <span className="flex items-start gap-3">
+                          <span className="flex min-w-0 items-start gap-3">
                             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white">
                               <Icon className="h-5 w-5" />
                             </span>
-                            <span>
+                            <span className="min-w-0">
                               <span className="block font-semibold text-slate-950">{procedure.label}</span>
                               <span className="mt-1 block text-sm leading-6 text-slate-600">{procedure.description}</span>
                             </span>

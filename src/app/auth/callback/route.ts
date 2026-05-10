@@ -22,7 +22,15 @@ export async function GET(request: Request) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const supabase = await createClient();
+  let supabase: Awaited<ReturnType<typeof createClient>>;
+  try {
+    supabase = await createClient();
+  } catch {
+    const loginUrl = new URL("/login", requestUrl.origin);
+    loginUrl.searchParams.set("message", "Configuration Supabase manquante côté production.");
+    return NextResponse.redirect(loginUrl);
+  }
+
   const { error: exchangeError } = code
     ? await supabase.auth.exchangeCodeForSession(code)
     : await supabase.auth.verifyOtp({

@@ -72,11 +72,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Formulaire incomplet ou invalide." }, { status: 400 });
   }
 
-  if (!isProcedureId(parsed.data.requestedAid)) {
-    return NextResponse.json({ error: "Démarche inconnue. Merci de choisir une démarche proposée." }, { status: 400 });
+  const receivedRequestType = parsed.data.requestedAid;
+  if (!isProcedureId(receivedRequestType)) {
+    return NextResponse.json(
+      {
+        error: `Démarche inconnue: "${receivedRequestType}". Merci de choisir une démarche proposée.`
+      },
+      { status: 400 }
+    );
   }
 
-  const procedure = getProcedureById(parsed.data.requestedAid)!;
+  const procedure = getProcedureById(receivedRequestType)!;
+  const requestType = procedure.id;
 
   if (!process.env.OPENAI_API_KEY) {
     return NextResponse.json(
@@ -123,11 +130,13 @@ export async function POST(request: Request) {
     clearTimeout(timeout);
   }
 
+  console.error("REQUEST_TYPE_INSERTED", requestType);
+
   const { data, error } = await supabase
     .from("requests")
     .insert({
       user_id: user.id,
-      request_type: procedure.id,
+      request_type: requestType,
       form_data: formData as unknown as Json,
       ai_result: aiResult as unknown as Json,
       status: "generated"

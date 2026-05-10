@@ -16,7 +16,7 @@ export function getRequiredEnv(name: string) {
 export function getSupabaseUrl() {
   const value = process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (!value || value.trim().length === 0) {
-    throw new Error("Variable d'environnement manquante: NEXT_PUBLIC_SUPABASE_URL");
+    throw new Error("URL Supabase manquante: NEXT_PUBLIC_SUPABASE_URL");
   }
   return normalizeSupabaseUrl(value);
 }
@@ -24,9 +24,30 @@ export function getSupabaseUrl() {
 export function getSupabaseAnonKey() {
   const value = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!value || value.trim().length === 0) {
-    throw new Error("Variable d'environnement manquante: NEXT_PUBLIC_SUPABASE_ANON_KEY");
+    throw new Error("Clé anon Supabase manquante: NEXT_PUBLIC_SUPABASE_ANON_KEY");
   }
   return value.trim();
+}
+
+export function getPublicSupabaseDebugInfo() {
+  const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() ?? "";
+  const hasUrl = rawUrl.length > 0;
+  const hasAnonKey = Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim());
+
+  let detectedDomain: string | null = null;
+  if (hasUrl) {
+    try {
+      detectedDomain = new URL(rawUrl).hostname;
+    } catch {
+      detectedDomain = "URL invalide";
+    }
+  }
+
+  return {
+    hasSupabaseUrl: hasUrl,
+    hasSupabaseAnonKey: hasAnonKey,
+    detectedSupabaseDomain: detectedDomain
+  };
 }
 
 export function normalizeSupabaseUrl(value: string) {

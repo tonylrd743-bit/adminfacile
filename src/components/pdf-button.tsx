@@ -10,11 +10,13 @@ import type { AiResult, RequestFormData } from "@/types/adminfacile";
 export function PdfButton({
   result,
   formData,
-  createdAt
+  createdAt,
+  className
 }: {
   result: AiResult;
   formData: RequestFormData;
   createdAt: string;
+  className?: string;
 }) {
   async function downloadPdf() {
     const { jsPDF } = await import("jspdf");
@@ -142,7 +144,7 @@ export function PdfButton({
   }
 
   return (
-    <Button onClick={downloadPdf} type="button">
+    <Button className={className} onClick={downloadPdf} type="button">
       <Download className="h-4 w-4" />
       Télécharger PDF
     </Button>

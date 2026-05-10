@@ -18,11 +18,11 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-3 text-lg font-semibold tracking-tight text-slate-950">
+        <Link href="/" className="flex min-w-0 items-center gap-3 text-lg font-semibold tracking-tight text-slate-950">
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-sm font-bold text-white shadow-sm shadow-blue-600/30">
             AF
           </span>
-          <span>AdminFacile</span>
+          <span className="truncate">AdminFacile</span>
         </Link>
 
         <nav className="hidden items-center gap-7 text-sm font-semibold text-slate-600 md:flex">
@@ -52,7 +52,7 @@ export function Header() {
           <nav className="grid gap-2">
             {links.map((link) => (
               <Link
-                className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                className="min-h-11 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
                 href={link.href}
                 key={link.href}
                 onClick={() => setOpen(false)}

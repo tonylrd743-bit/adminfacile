@@ -12,13 +12,13 @@ const nav = [
 
 export function PrivateShell({ children }: { children: ReactNode }) {
   return (
-    <main className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[260px_1fr] lg:px-8">
-      <aside className="h-fit rounded-3xl border border-slate-200 bg-white p-3 shadow-sm">
-        <nav className="grid gap-1">
+    <main className="mx-auto grid max-w-7xl gap-5 px-3 py-5 sm:gap-8 sm:px-6 sm:py-8 lg:grid-cols-[260px_1fr] lg:px-8">
+      <aside className="h-fit overflow-hidden rounded-3xl border border-slate-200 bg-white p-2 shadow-sm sm:p-3">
+        <nav className="flex gap-1 overflow-x-auto pb-1 lg:grid lg:overflow-visible lg:pb-0">
           {nav.map((item) => (
             <Link
               className={cn(
-                "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                "flex min-h-11 shrink-0 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
               )}
               href={item.href}
               key={item.href}
@@ -29,7 +29,7 @@ export function PrivateShell({ children }: { children: ReactNode }) {
           ))}
         </nav>
       </aside>
-      <section>{children}</section>
+      <section className="min-w-0">{children}</section>
     </main>
   );
 }

@@ -1,4 +1,17 @@
-import { ArrowRight, Check, HelpCircle, Lock, ShieldCheck, Sparkles, Workflow } from "lucide-react";
+import {
+  ArrowRight,
+  BriefcaseBusiness,
+  Check,
+  FileText,
+  HelpCircle,
+  Lock,
+  Mail,
+  ReceiptText,
+  ShieldCheck,
+  Sparkles,
+  TimerReset,
+  Workflow
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button, ButtonLink } from "@/components/button";
@@ -7,32 +20,72 @@ import { DisclaimerBox } from "@/components/disclaimer-box";
 import { isStripePlanConfigured } from "@/lib/stripe-checkout";
 
 const discoveryFeatures = [
-  "1 dossier gratuit",
-  "Generation IA",
-  "Prompts pre-ecrits",
-  "Export PDF",
+  "1 dossier/mois",
+  "Prompts essentiels",
+  "Generation IA standard",
   "Preparation email",
-  "Responsive mobile"
+  "PDF simple",
+  "Acces mobile",
+  "Historique limite",
+  "Onboarding simple",
+  "Tutoriel rapide",
+  "Exemples populaires"
 ];
 
 const premiumFeatures = [
   "Dossiers illimites",
-  "Prompts premium",
+  "Prompts premium France",
   "Generation IA avancee",
-  "Export PDF premium",
-  "Preparation email intelligente",
+  "PDF premium",
   "Historique complet",
-  "Prompts France",
-  "Modeles ARCE / CAF / URSSAF",
-  "Support prioritaire"
+  "Preparation email intelligente",
+  "Organisation dossiers",
+  "Favoris",
+  "Prompts CAF / URSSAF / France Travail avances",
+  "Suggestions automatiques",
+  "Mode mobile premium",
+  "Futures automatisations IA"
 ];
 
 const proFeatures = [
-  "Multi dossiers",
+  "Tout Premium inclus",
+  "Generation devis",
+  "Generation factures",
+  "Reponses clients",
+  "Preparation emails professionnels",
+  "Relances clients",
+  "Relances factures impayees",
   "Stockage documents",
-  "Outils entrepreneur",
-  "Gestion administrative avancee",
-  "Automatisations futures IA"
+  "Coffre administratif",
+  "Suivi administratif",
+  "Timeline dossiers",
+  "Export PDF professionnel",
+  "Modeles entreprise",
+  "Gestion URSSAF",
+  "Modeles ARCE entrepreneur",
+  "Dashboard business",
+  "Assistant entrepreneur IA",
+  "Futures automatisations IA"
+];
+
+const automationItems = [
+  "Reponses email IA",
+  "Rappels administratifs",
+  "Classement automatique",
+  "Relances automatiques",
+  "Assistant entrepreneur IA",
+  "Suivi intelligent",
+  "Analyse documents IA",
+  "Gestion clients simplifiee"
+];
+
+const entrepreneurTools = [
+  { title: "Creer un devis", icon: FileText },
+  { title: "Creer une facture", icon: ReceiptText },
+  { title: "Preparer email client", icon: Mail },
+  { title: "Reponse demande devis", icon: BriefcaseBusiness },
+  { title: "Relance facture", icon: TimerReset },
+  { title: "Assistant administratif IA", icon: Sparkles }
 ];
 
 export default function PricingPage() {
@@ -44,11 +97,11 @@ export default function PricingPage() {
         <div className="mx-auto max-w-4xl text-center">
           <p className="text-sm font-semibold uppercase text-blue-600">Tarifs AdminFacile</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-            Une offre claire pour preparer vos demarches sans complexite
+            Un assistant administratif premium pour avancer avec methode
           </h1>
           <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-            Commencez gratuitement, puis passez en Premium lorsque vous voulez produire plus de dossiers, conserver un
-            historique complet et gagner du temps sur vos courriers administratifs.
+            AdminFacile transforme vos demandes administratives en dossiers structures, emails prets a envoyer et PDF
+            lisibles, sur mobile comme sur desktop.
           </p>
         </div>
 
@@ -66,7 +119,7 @@ export default function PricingPage() {
                 <ArrowRight className="h-4 w-4" />
               </ButtonLink>
             }
-            description="Pour decouvrir AdminFacile avec un premier dossier complet."
+            description="Pour tester AdminFacile avec un premier dossier administratif clair."
             features={discoveryFeatures}
             name="Decouverte"
             price="0€"
@@ -74,7 +127,7 @@ export default function PricingPage() {
           <PlanCard
             action={<CheckoutButton disabled={!premiumEnabled} label="Passer Premium" plan="premium" />}
             badge="Le plus populaire"
-            description="Pour utiliser AdminFacile regulierement et creer des dossiers sans limite."
+            description="Votre assistant administratif personnel intelligent pour produire des dossiers sans limite."
             featured
             features={premiumFeatures}
             name="Premium"
@@ -87,10 +140,11 @@ export default function PricingPage() {
                   <Lock className="h-4 w-4" />
                   Bientot disponible
                 </Button>
-                <p className="text-center text-sm font-medium text-slate-500">Offre pro en preparation.</p>
+                <p className="text-center text-sm font-medium text-slate-500">Offre business en preparation.</p>
               </div>
             }
-            description="Pour les independants et petites structures qui veulent centraliser leur administratif."
+            badge="Business"
+            description="Pour auto-entrepreneurs, independants, artisans et petites entreprises."
             features={proFeatures}
             name="Professionnel"
             price="29,99€/mois"
@@ -103,22 +157,78 @@ export default function PricingPage() {
           <InfoCard
             icon={Sparkles}
             title="Pourquoi choisir AdminFacile"
-            text="Un parcours simple, des prompts utiles et des dossiers structures pour reduire l'incertitude avant vos demarches."
+            text="Un produit concu pour produire des demandes claires, rassurantes et exploitables, sans jargon inutile."
           />
           <InfoCard
             icon={Workflow}
             title="Comment ca fonctionne"
-            text="Choisissez une demarche, remplissez le formulaire, genereez votre dossier, puis exportez le PDF ou preparez l'email."
+            text="Choisissez une demarche, utilisez un prompt si besoin, genereez le dossier, puis exportez le PDF ou preparez l'email."
           />
           <InfoCard
             icon={ShieldCheck}
-            title="Securite et clarte"
-            text="Les cles serveur ne sont pas exposees au navigateur et l'utilisateur garde toujours la main avant l'envoi."
+            title="Serieux et controle"
+            text="AdminFacile prepare vos contenus, mais vous gardez toujours la validation finale avant envoi ou depot."
           />
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="max-w-3xl">
+          <p className="text-sm font-semibold uppercase text-blue-600">Outils entrepreneur</p>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+            Une base solide pour les independants et petites entreprises
+          </h2>
+          <p className="mt-3 leading-7 text-slate-600">
+            Les premiers outils administratifs business sont prepares dans l'interface produit et pourront etre actives
+            progressivement.
+          </p>
+        </div>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {entrepreneurTools.map((tool) => (
+            <ComingSoonCard icon={tool.icon} key={tool.title} title={tool.title} />
+          ))}
+        </div>
+      </section>
+
+      <section className="border-y border-slate-200 bg-slate-950 text-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase text-blue-200">En developpement</p>
+              <h2 className="mt-2 text-3xl font-semibold tracking-tight">Automatisations IA futures</h2>
+              <p className="mt-3 max-w-3xl leading-7 text-slate-300">
+                AdminFacile est pense pour devenir un vrai poste de pilotage administratif intelligent.
+              </p>
+            </div>
+            <span className="w-fit rounded-full bg-blue-600 px-4 py-2 text-sm font-bold">En developpement</span>
+          </div>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {automationItems.map((item) => (
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm font-semibold text-slate-100" key={item}>
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+          <div>
+            <p className="text-sm font-semibold uppercase text-blue-600">Avis utilisateurs</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Une experience rassurante</h2>
+            <p className="mt-3 leading-7 text-slate-600">
+              Le design met l'accent sur la lisibilite, les actions mobiles et la clarte des prochaines etapes.
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Testimonial quote="J'ai compris quoi joindre et comment formuler ma demande sans tourner en rond." name="Utilisateur CAF" />
+            <Testimonial quote="La preparation email et le PDF donnent un rendu beaucoup plus professionnel." name="Micro-entrepreneur" />
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-4 pb-14 sm:px-6 lg:px-8">
         <div className="text-center">
           <p className="text-sm font-semibold uppercase text-blue-600">FAQ</p>
           <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Questions frequentes</h2>
@@ -134,7 +244,7 @@ export default function PricingPage() {
           />
           <FaqItem
             question="Puis-je utiliser AdminFacile sur mobile ?"
-            answer="Oui. Les formulaires, le dashboard, le PDF et la preparation email sont concus pour mobile et desktop."
+            answer="Oui. Les formulaires, le dashboard, le PDF et la preparation email sont concus pour iPhone, Android et desktop."
           />
           <FaqItem
             question="Stripe est-il obligatoire pour tester ?"
@@ -200,6 +310,31 @@ function InfoCard({ icon: Icon, title, text }: { icon: LucideIcon; title: string
       </span>
       <h2 className="mt-5 text-xl font-semibold text-slate-950">{title}</h2>
       <p className="mt-3 leading-7 text-slate-600">{text}</p>
+    </article>
+  );
+}
+
+function ComingSoonCard({ icon: Icon, title }: { icon: LucideIcon; title: string }) {
+  return (
+    <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+      <div className="flex items-start gap-4">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+          <Icon className="h-5 w-5" />
+        </span>
+        <div>
+          <h3 className="font-semibold text-slate-950">{title}</h3>
+          <p className="mt-2 text-sm font-semibold text-blue-700">Bientot disponible</p>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function Testimonial({ quote, name }: { quote: string; name: string }) {
+  return (
+    <article className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+      <p className="leading-7 text-slate-700">"{quote}"</p>
+      <p className="mt-4 text-sm font-semibold text-slate-950">{name}</p>
     </article>
   );
 }

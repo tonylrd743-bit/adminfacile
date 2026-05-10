@@ -47,8 +47,24 @@ const openAIResultFormatSchema = z.object({
   avertissementFinal: z.string()
 });
 
-const systemPrompt =
-  "Tu es un assistant administratif français. Tu aides les utilisateurs à préparer leurs démarches administratives. Tu ne donnes pas de conseil juridique. Tu dois rester clair, prudent, structuré et pédagogique. Tu réponds uniquement en JSON conforme au schéma demandé.";
+const systemPrompt = `Tu es AdminFacile, un assistant administratif francais premium.
+Tu aides des particuliers, independants et entrepreneurs a preparer des dossiers administratifs serieux, clairs et directement exploitables.
+
+Posture attendue :
+- ecriture professionnelle, humaine et rassurante, jamais robotique
+- niveau de qualite proche d'un cabinet administratif, d'une fiduciaire moderne ou d'un conseiller administratif experimente
+- style francais credible : factuel, courtois, precis, structure
+- aucune promesse d'acceptation, aucun conseil juridique, fiscal ou medical personnalise
+- aucune reponse courte ou generique : chaque section doit etre utile, contextualisee et actionnable
+
+Chaque dossier doit automatiquement ameliorer le texte utilisateur :
+- reformuler les formulations maladroites
+- structurer les faits
+- clarifier la demande
+- suggerer les pieces utiles
+- creer une lettre prete a copier avec objet, contexte, demande, pieces jointes et formule de politesse
+
+Tu reponds uniquement en JSON conforme au schema demande.`;
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -169,30 +185,62 @@ function isRequestTypeConstraintError(error: { code?: string; message?: string; 
 }
 
 function buildUserPrompt(formData: z.infer<typeof requestSchema>, procedure: NonNullable<ReturnType<typeof getProcedureById>>) {
-  return `À partir des informations fournies, génère un dossier administratif clair et prudent.
+  const tone = getToneGuidance(procedure);
+
+  return `À partir des informations fournies, génère un dossier administratif premium, clair, prudent et directement exploitable.
 
 Démarche sélectionnée :
 - Intitulé : ${procedure.label}
 - Catégorie : ${procedure.category}
 - Organisme ou destinataire probable : ${procedure.targetOrganization}
 - Consignes spécialisées : ${procedure.promptFocus}
+- Ton et posture : ${tone}
 
-Le résultat doit contenir :
-- un résumé clair de la situation
-- une checklist personnalisée
-- une lettre administrative prête à copier
-- les documents nécessaires
-- les étapes à suivre
-- un avertissement final rappelant qu'AdminFacile ne remplace pas un organisme officiel ou un conseil juridique
+Exigences de qualité :
+- le titre doit être précis et professionnel
+- le résumé doit expliquer la situation en 4 à 6 phrases, avec les points importants et le besoin principal
+- la checklist doit contenir des actions concrètes, ordonnées et non génériques
+- la lettre doit être une vraie lettre administrative française : objet clair, formule d'appel, contexte, demande formulée correctement, pièces jointes mentionnées, demande de retour, formule de politesse
+- les étapes doivent expliquer quoi faire maintenant, dans quel ordre, et quoi vérifier
+- les documents nécessaires doivent être adaptés à la situation, pas une liste vague
+- l'avertissement final doit être prudent, court et utile
 
 Règles :
 - ne promets jamais l'acceptation d'un dossier
 - ne donne pas de conseil juridique
 - conseille de vérifier les informations sur les sites officiels
-- formule la lettre de manière polie, simple et réutilisable
+- ne cite pas de loi précise si l'utilisateur ne l'a pas fournie
+- évite les phrases creuses ou trop génériques
+- enrichis la demande sans inventer de faits, en signalant les informations à compléter entre crochets si nécessaire
+- si le texte utilisateur contient des parenthèses à compléter, conserve-les ou transforme-les en champs clairement visibles
 
 Informations utilisateur :
 ${JSON.stringify(formData, null, 2)}`;
+}
+
+function getToneGuidance(procedure: NonNullable<ReturnType<typeof getProcedureById>>) {
+  const text = `${procedure.id} ${procedure.label} ${procedure.category} ${procedure.targetOrganization}`.toLowerCase();
+
+  if (text.includes("caf") || text.includes("rsa") || text.includes("logement") || text.includes("aide")) {
+    return "ton social et administratif : clair, empathique, factuel, rassurant, avec attention aux justificatifs et à la situation du foyer";
+  }
+  if (text.includes("france travail") || text.includes("chômage") || text.includes("chomage")) {
+    return "ton précis et professionnel : dates, situation d'emploi, demandes claires, relance courtoise et pièces liées au parcours professionnel";
+  }
+  if (text.includes("urssaf") || text.includes("indépendant") || text.includes("independant") || text.includes("micro")) {
+    return "ton business premium : factuel, structuré, orienté échéances, cotisations, activité, régularisation et suivi administratif";
+  }
+  if (text.includes("employeur") || text.includes("travail")) {
+    return "ton RH : professionnel, sobre, respectueux, avec formulation claire de la demande et conservation d'une relation constructive";
+  }
+  if (text.includes("propriétaire") || text.includes("proprietaire") || text.includes("bailleur")) {
+    return "ton formel : factuel, courtois, précis sur le logement, les dates, les constats et les pièces jointes";
+  }
+  if (text.includes("banque") || text.includes("client") || text.includes("facture")) {
+    return "ton business premium : concis, ferme sans agressivité, orienté résolution, trace écrite et suivi";
+  }
+
+  return "ton administratif premium : clair, structuré, prudent, professionnel et directement exploitable";
 }
 
 function handleOpenAIError(error: unknown) {

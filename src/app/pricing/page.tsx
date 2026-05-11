@@ -4,7 +4,6 @@ import {
   Check,
   FileText,
   HelpCircle,
-  Lock,
   Mail,
   ReceiptText,
   ShieldCheck,
@@ -14,7 +13,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { Button, ButtonLink } from "@/components/button";
+import { ButtonLink } from "@/components/button";
 import { CheckoutButton } from "@/components/checkout-button";
 import { DisclaimerBox } from "@/components/disclaimer-box";
 import { isStripePlanConfigured } from "@/lib/stripe-checkout";
@@ -136,11 +135,11 @@ export default function PricingPage() {
           <PlanCard
             action={
               <div className="space-y-2">
-                <Button className="w-full" disabled type="button" variant="secondary">
-                  <Lock className="h-4 w-4" />
-                  Bientot disponible
-                </Button>
-                <p className="text-center text-sm font-medium text-slate-500">Offre business en preparation.</p>
+                <ButtonLink className="w-full" href="/dashboard/pro" variant="secondary">
+                  <BriefcaseBusiness className="h-4 w-4" />
+                  Tester la demo Pro
+                </ButtonLink>
+                <p className="text-center text-sm font-medium text-slate-500">Aucun paiement requis pour la demo.</p>
               </div>
             }
             badge="Business"

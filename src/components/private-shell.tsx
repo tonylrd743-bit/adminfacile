@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { FilePlus2, FolderLock, LayoutDashboard, LibraryBig, UserRound } from "lucide-react";
+import { BriefcaseBusiness, FilePlus2, FolderLock, LayoutDashboard, LibraryBig, UserRound } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 const nav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/new", label: "Nouvelle démarche", icon: FilePlus2 },
-  { href: "/dashboard/prompts", label: "Prompts pré-écrits", icon: LibraryBig },
+  { href: "/dashboard/new", label: "Nouvelle demarche", icon: FilePlus2 },
+  { href: "/dashboard/prompts", label: "Prompts pre-ecrits", icon: LibraryBig },
+  { href: "/dashboard/pro", label: "Outils Pro", icon: BriefcaseBusiness },
   { href: "/dashboard/documents", label: "Mes documents", icon: FolderLock },
   { href: "/dashboard/account", label: "Mon compte", icon: UserRound }
 ];

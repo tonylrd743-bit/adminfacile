@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { ArrowRight, Check, Copy, Download, ExternalLink, ImageUp, Mail, Sparkles } from "lucide-react";
 import type { jsPDF } from "jspdf";
 import { Button } from "@/components/button";
+import { getProfileBusinessLabel, getProfileDisplayName } from "@/lib/profile";
+import type { ProfessionalProfile } from "@/lib/profile";
 import type { ChantierEstimateResult } from "@/types/chantier";
 
 const serviceCategories = [
@@ -20,10 +22,10 @@ const serviceCategories = [
   "Autre"
 ];
 
-export function ChantierSimulator() {
+export function ChantierSimulator({ profile }: { profile?: ProfessionalProfile | null }) {
   const [description, setDescription] = useState("");
   const [serviceType, setServiceType] = useState("");
-  const [businessActivity, setBusinessActivity] = useState("");
+  const [businessActivity, setBusinessActivity] = useState(getProfileBusinessLabel(profile));
   const [dimensions, setDimensions] = useState("");
   const [estimatedTimeInput, setEstimatedTimeInput] = useState("");
   const [materials, setMaterials] = useState("");
@@ -69,6 +71,17 @@ export function ChantierSimulator() {
           description,
           serviceType,
           businessActivity,
+          profileContext: {
+            companyName: profile?.company_name,
+            profession: profile?.profession,
+            activity: profile?.activity,
+            specialty: profile?.specialty,
+            hourlyRate: profile?.hourly_rate,
+            serviceArea: profile?.service_area,
+            travelFee: profile?.travel_fee,
+            vatApplicable: profile?.vat_applicable,
+            documentStyle: profile?.document_style
+          },
           dimensions,
           estimatedTimeInput,
           materials,
@@ -155,6 +168,9 @@ export function ChantierSimulator() {
           <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Informations de prestation</h2>
           <p className="mt-2 leading-7 text-slate-600">
             Décrivez une mission, une intervention ou un projet client. Les photos, dimensions, temps et fournitures restent optionnels.
+          </p>
+          <p className="mt-3 rounded-2xl bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-900">
+            Profil appliqué : {getProfileDisplayName(profile)} - {getProfileBusinessLabel(profile)}.
           </p>
 
           <div className="mt-6 space-y-5">

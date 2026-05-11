@@ -1,6 +1,13 @@
 import { ChantierSimulator } from "@/components/chantier-simulator";
+import { createClient } from "@/lib/supabase/server";
 
-export default function ChantierSimulatorPage() {
+export default async function ChantierSimulatorPage() {
+  const supabase = await createClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user!.id).single();
+
   return (
     <div className="space-y-8">
       <section className="rounded-[2rem] bg-slate-950 p-6 text-white shadow-sm sm:p-8">
@@ -16,7 +23,7 @@ export default function ChantierSimulatorPage() {
         </div>
       </section>
 
-      <ChantierSimulator />
+      <ChantierSimulator profile={profile} />
     </div>
   );
 }

@@ -1,8 +1,15 @@
 import { ProDemoTools } from "@/components/pro-demo-tools";
 import { ButtonLink } from "@/components/button";
+import { createClient } from "@/lib/supabase/server";
 import { Calculator } from "lucide-react";
 
-export default function DashboardProPage() {
+export default async function DashboardProPage() {
+  const supabase = await createClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user!.id).single();
+
   return (
     <div className="space-y-8">
       <section className="rounded-[2rem] bg-slate-950 p-6 text-white shadow-sm sm:p-8">
@@ -35,7 +42,7 @@ export default function DashboardProPage() {
         </div>
       </section>
 
-      <ProDemoTools />
+      <ProDemoTools profile={profile} />
     </div>
   );
 }

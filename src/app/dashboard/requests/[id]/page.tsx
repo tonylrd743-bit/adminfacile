@@ -15,6 +15,7 @@ export default async function RequestResultPage({ params }: { params: Promise<{ 
   const supabase = await createClient();
   const { data: request, error } = await supabase.from("requests").select("*").eq("id", id).maybeSingle();
   if (error || !request) notFound();
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", request.user_id).single();
 
   const result = normalizeAiResult(request.ai_result);
   const formData = request.form_data as unknown as RequestFormData;
@@ -29,7 +30,7 @@ export default async function RequestResultPage({ params }: { params: Promise<{ 
             <p className="mt-4 max-w-3xl leading-8 text-slate-300">{result.resume}</p>
           </div>
           <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto lg:shrink-0">
-            <PdfButton className="w-full sm:w-auto" createdAt={request.created_at} formData={formData} result={result} />
+            <PdfButton className="w-full sm:w-auto" createdAt={request.created_at} formData={formData} profile={profile} result={result} />
             <ButtonLink className="w-full sm:w-auto" href="/dashboard" variant="outline">
               Revenir dashboard
             </ButtonLink>
@@ -40,7 +41,7 @@ export default async function RequestResultPage({ params }: { params: Promise<{ 
         </div>
       </section>
 
-      <EmailPreparer formData={formData} result={result} />
+      <EmailPreparer formData={formData} profile={profile} result={result} />
 
       <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
         <ResultSection icon={ClipboardList} items={result.checklist} title="Checklist personnalisée" />

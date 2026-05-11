@@ -109,6 +109,7 @@ export async function POST(request: Request) {
   }
 
   const formData = parsed.data;
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), OPENAI_TIMEOUT_MS);
 
@@ -121,7 +122,7 @@ export async function POST(request: Request) {
           { role: "system", content: systemPrompt },
           {
             role: "user",
-            content: buildUserPrompt(formData, procedure)
+            content: buildUserPrompt(formData, procedure, profile)
           }
         ],
         text: {
@@ -184,7 +185,11 @@ function isRequestTypeConstraintError(error: { code?: string; message?: string; 
   return error.code === "23514" && text.includes("requests_request_type_check");
 }
 
-function buildUserPrompt(formData: z.infer<typeof requestSchema>, procedure: NonNullable<ReturnType<typeof getProcedureById>>) {
+function buildUserPrompt(
+  formData: z.infer<typeof requestSchema>,
+  procedure: NonNullable<ReturnType<typeof getProcedureById>>,
+  profile: unknown
+) {
   const tone = getToneGuidance(procedure);
 
   return `À partir des informations fournies, génère un dossier administratif premium, clair, prudent et directement exploitable.
@@ -213,6 +218,11 @@ Règles :
 - évite les phrases creuses ou trop génériques
 - enrichis la demande sans inventer de faits, en signalant les informations à compléter entre crochets si nécessaire
 - si le texte utilisateur contient des parenthèses à compléter, conserve-les ou transforme-les en champs clairement visibles
+- si le profil professionnel contient un métier, une entreprise, un SIRET ou des coordonnées, les utiliser pour personnaliser la signature, le contexte et les formulations
+- pour un plaquiste, parler matériaux, m², main-d'œuvre et chantier seulement si c'est pertinent ; pour un consultant, parler mission, livrables, temps et valeur ; pour le nettoyage, parler surface, accès, produits et durée
+
+Profil utilisateur enregistré :
+${JSON.stringify(profile, null, 2)}
 
 Informations utilisateur :
 ${JSON.stringify(formData, null, 2)}`;

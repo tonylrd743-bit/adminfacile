@@ -3,6 +3,7 @@ import { ButtonLink } from "@/components/button";
 import { DashboardCard } from "@/components/dashboard-card";
 import { PdfButton } from "@/components/pdf-button";
 import { normalizeAiResult } from "@/lib/admin-result";
+import { getProfileBusinessLabel, getProfileDisplayName } from "@/lib/profile";
 import { getProcedureLabel } from "@/lib/procedures";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";
@@ -17,6 +18,7 @@ export default async function DashboardPage() {
     .from("requests")
     .select("id, request_type, status, created_at, form_data, ai_result")
     .order("created_at", { ascending: false });
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user!.id).single();
 
   const latest = requests?.slice(0, 5) ?? [];
 
@@ -26,15 +28,18 @@ export default async function DashboardPage() {
         <p className="text-sm font-semibold text-blue-200">Espace privé</p>
         <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0">
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-4xl">Tableau de bord administratif</h1>
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-4xl">Tableau de bord {getProfileDisplayName(profile)}</h1>
             <p className="mt-3 max-w-2xl leading-8 text-slate-300">
-              Lancez une démarche, retrouvez vos dossiers générés et préparez vos documents professionnels au même endroit.
+              Lancez une démarche, retrouvez vos dossiers générés et préparez vos documents professionnels adaptés à votre profil : {getProfileBusinessLabel(profile)}.
             </p>
             <p className="mt-2 text-sm text-slate-400">{user?.email}</p>
           </div>
           <ButtonLink className="w-full sm:w-auto" href="/dashboard/new">
             <FilePlus2 className="h-4 w-4" />
             Nouvelle démarche
+          </ButtonLink>
+          <ButtonLink className="w-full sm:w-auto" href="mailto:contactadminfacile@gmail.com" variant="outline">
+            Nous contacter
           </ButtonLink>
         </div>
       </section>
@@ -131,7 +136,7 @@ export default async function DashboardPage() {
                     <ButtonLink className="w-full sm:w-auto" href={`/dashboard/requests/${request.id}`} variant="outline">
                       Ouvrir
                     </ButtonLink>
-                    <PdfButton className="w-full sm:w-auto" createdAt={request.created_at} formData={formData} result={result} />
+                    <PdfButton className="w-full sm:w-auto" createdAt={request.created_at} formData={formData} profile={profile} result={result} />
                   </div>
                 </article>
               );

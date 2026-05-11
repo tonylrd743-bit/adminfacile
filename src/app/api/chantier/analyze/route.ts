@@ -15,6 +15,20 @@ const requestSchema = z.object({
   dimensions: z.string().trim().optional().default(""),
   travelDistance: z.string().trim().optional().default(""),
   services: z.array(z.string()).optional().default([]),
+  profileContext: z
+    .object({
+      companyName: z.string().nullable().optional(),
+      profession: z.string().nullable().optional(),
+      activity: z.string().nullable().optional(),
+      specialty: z.string().nullable().optional(),
+      hourlyRate: z.number().nullable().optional(),
+      serviceArea: z.string().nullable().optional(),
+      travelFee: z.number().nullable().optional(),
+      vatApplicable: z.boolean().nullable().optional(),
+      documentStyle: z.string().nullable().optional()
+    })
+    .optional()
+    .default({}),
   images: z.array(z.string().startsWith("data:image/")).max(4).optional().default([])
 });
 
@@ -121,6 +135,9 @@ function buildPrompt(data: z.infer<typeof requestSchema>) {
 
 Métier ou activité de l'utilisateur :
 ${data.businessActivity || "Non précisé"}
+
+Profil professionnel enregistré :
+${JSON.stringify(data.profileContext, null, 2)}
 
 Type de prestation :
 ${data.serviceType || "Non précisé"}

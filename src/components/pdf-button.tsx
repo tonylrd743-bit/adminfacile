@@ -3,19 +3,23 @@
 import { Download } from "lucide-react";
 import { Button } from "@/components/button";
 import { legalDisclaimer } from "@/components/disclaimer-box";
+import { getProfileBusinessLabel, getProfileDisplayName } from "@/lib/profile";
 import { getProcedureLabel } from "@/lib/procedures";
 import { formatDate, stripListMarker } from "@/lib/utils";
 import type { AiResult, RequestFormData } from "@/types/adminfacile";
+import type { ProfessionalProfile } from "@/lib/profile";
 
 export function PdfButton({
   result,
   formData,
   createdAt,
+  profile,
   className
 }: {
   result: AiResult;
   formData: RequestFormData;
   createdAt: string;
+  profile?: ProfessionalProfile | null;
   className?: string;
 }) {
   async function downloadPdf() {
@@ -120,7 +124,7 @@ export function PdfButton({
 
     writeSectionTitle("Informations utilisateur");
     writeParagraph(
-      `${formData.firstName} ${formData.lastName} - ${formData.email}\nType de démarche: ${procedureTitle}\nSituation: ${formData.familyStatus || "-"}, ${formData.childrenCount} enfant(s), ${formData.housing || "-"}`
+      `${getProfileDisplayName(profile)} - ${formData.email}\nProfil : ${getProfileBusinessLabel(profile)}\nType de démarche: ${procedureTitle}\nSituation: ${formData.familyStatus || "-"}, ${formData.childrenCount} enfant(s), ${formData.housing || "-"}`
     );
 
     writeSectionTitle("Checklist");

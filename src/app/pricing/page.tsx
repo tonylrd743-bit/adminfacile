@@ -176,12 +176,21 @@ export default function PricingPage() {
               </h2>
               <p className="mt-3 leading-7 text-slate-600">
                 Si plusieurs personnes découvrent AdminFacile grâce à vous et testent réellement les outils, votre mois Premium
-                peut être offert ou remboursé. Le système valorise les utilisateurs actifs, pas les invitations artificielles.
+                peut être offert après validation manuelle. Le système valorise les utilisateurs actifs, pas les invitations artificielles.
               </p>
+              <p className="mt-3 text-sm font-semibold text-slate-700">Offre soumise à validation. Aucun remboursement automatique n'est promis.</p>
               <div className="mt-5 grid gap-3 sm:grid-cols-3">
                 <ReferralMetric label="Filleuls actifs" value="2 / 3" />
                 <ReferralMetric label="Statut" value="Ambassadeur" />
-                <ReferralMetric label="Récompense" value="1 mois offert" />
+                <ReferralMetric label="Avantage possible" value="1 mois offert" />
+              </div>
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                <ButtonLink className="w-full sm:w-auto" href="/affiliation" variant="secondary">
+                  Programme ambassadeur
+                </ButtonLink>
+                <ButtonLink className="w-full sm:w-auto" href="mailto:contactadminfacile@gmail.com" variant="outline">
+                  Nous contacter
+                </ButtonLink>
               </div>
             </div>
             <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
@@ -196,8 +205,8 @@ export default function PricingPage() {
                 <div className="h-3 w-2/3 rounded-full bg-blue-600" />
               </div>
               <p className="mt-4 text-sm leading-6 text-slate-600">
-                Encore 1 utilisateur actif pour déclencher l'avantage. Validation conseillée : compte créé, outil testé,
-                première génération terminée.
+                Encore 1 utilisateur actif pour demander l'avantage. Validation conseillée : compte créé, outil testé,
+                première génération terminée. Offre soumise à validation.
               </p>
             </div>
           </div>

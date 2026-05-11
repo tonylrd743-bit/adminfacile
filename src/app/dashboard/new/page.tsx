@@ -13,6 +13,7 @@ export default async function NewRequestPage({
   const {
     data: { user }
   } = await supabase.auth.getUser();
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user!.id).single();
 
   return (
     <div className="space-y-6">
@@ -34,7 +35,7 @@ export default async function NewRequestPage({
           <ArrowRight className="h-4 w-4" />
         </ButtonLink>
       </section>
-      <RequestForm email={user?.email ?? ""} initialTemplateId={template} />
+      <RequestForm email={user?.email ?? ""} initialTemplateId={template} profile={profile} />
     </div>
   );
 }

@@ -26,6 +26,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/button";
 import { findPopularRequestTemplate } from "@/data/popular-requests";
+import type { ProfessionalProfile } from "@/lib/profile";
 import { getProcedureCategories, procedures } from "@/lib/procedures";
 import type { ProcedureField } from "@/lib/procedures";
 
@@ -61,7 +62,15 @@ type InitialFormState = {
   appliedTemplateTitle: string | null;
 };
 
-export function RequestForm({ email, initialTemplateId }: { email: string; initialTemplateId?: string }) {
+export function RequestForm({
+  email,
+  initialTemplateId,
+  profile
+}: {
+  email: string;
+  initialTemplateId?: string;
+  profile?: ProfessionalProfile | null;
+}) {
   const router = useRouter();
   const categories = useMemo(() => getProcedureCategories(), []);
   const [initialState] = useState<InitialFormState>(() => getInitialFormState(initialTemplateId));
@@ -157,15 +166,15 @@ export function RequestForm({ email, initialTemplateId }: { email: string; initi
           title="Vos informations"
         >
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field help="Votre prénom tel que vous souhaitez le voir dans le dossier." label="Prénom" name="firstName" required />
-            <Field help="Votre nom de famille." label="Nom" name="lastName" required />
+            <Field defaultValue={profile?.first_name ?? ""} help="Votre prénom tel que vous souhaitez le voir dans le dossier." label="Prénom" name="firstName" required />
+            <Field defaultValue={profile?.last_name ?? ""} help="Votre nom de famille." label="Nom" name="lastName" required />
           </div>
           <Field defaultValue={email} help="Utilisé pour rattacher la démarche à votre espace." label="Email" name="email" required type="email" />
         </FormSection>
 
         <FormSection
           eyebrow="Étape 2"
-          text="Choisissez la démarche à préparer. Les questions suivantes s'adaptent automatiquement."
+          text={`Choisissez la démarche à préparer. Les questions suivantes s'adaptent automatiquement${profile?.profession ? ` à votre activité : ${profile.profession}` : ""}.`}
           title="Votre démarche"
         >
           <div className="space-y-6">

@@ -3,15 +3,25 @@
 import { useMemo, useState } from "react";
 import { Check, Copy, ExternalLink, Mail, Share2 } from "lucide-react";
 import { Button } from "@/components/button";
+import { getProfileSignature } from "@/lib/profile";
+import type { ProfessionalProfile } from "@/lib/profile";
 import { getProcedureLabel } from "@/lib/procedures";
 import { stripListMarker } from "@/lib/utils";
 import type { AiResult, RequestFormData } from "@/types/adminfacile";
 
 type CopiedTarget = "email" | "share" | null;
 
-export function EmailPreparer({ result, formData }: { result: AiResult; formData: RequestFormData }) {
+export function EmailPreparer({
+  result,
+  formData,
+  profile
+}: {
+  result: AiResult;
+  formData: RequestFormData;
+  profile?: ProfessionalProfile | null;
+}) {
   const [copied, setCopied] = useState<CopiedTarget>(null);
-  const email = useMemo(() => buildEmail(result, formData), [result, formData]);
+  const email = useMemo(() => buildEmail(result, formData, profile), [result, formData, profile]);
 
   async function copyEmail(target: CopiedTarget = "email") {
     await navigator.clipboard.writeText(email.body);
@@ -97,7 +107,7 @@ export function EmailPreparer({ result, formData }: { result: AiResult; formData
   );
 }
 
-function buildEmail(result: AiResult, formData: RequestFormData) {
+function buildEmail(result: AiResult, formData: RequestFormData, profile?: ProfessionalProfile | null) {
   const procedureLabel = getProcedureLabel(formData.requestedAid);
   const senderName = [formData.lastName, formData.firstName].filter(Boolean).join(" ");
   const subject = buildEmailSubject(procedureLabel, formData);
@@ -119,7 +129,7 @@ ${documents}
 Je reste disponible pour transmettre tout complément utile et vous remercie par avance pour votre retour.
 
 Cordialement,
-${senderName || "[Nom Prénom]"}`;
+${getProfileSignature(profile) || senderName || "[Nom Prénom]"}`;
 
   const encodedSubject = encodeURIComponent(subject);
   const encodedBody = encodeURIComponent(body);

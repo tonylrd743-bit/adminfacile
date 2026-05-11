@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DisclaimerBox } from "@/components/disclaimer-box";
+import { ButtonLink } from "@/components/button";
 
 export function Footer() {
   return (
@@ -15,13 +16,22 @@ export function Footer() {
           <p className="mt-4 max-w-xl text-sm leading-7 text-slate-600">
             Un assistant professionnel pour préparer vos démarches administratives, vos courriers et vos documents business avec plus de clarté.
           </p>
-          <p className="mt-3 text-sm text-slate-500">Contact : contact@adminfacile.fr</p>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+            <ButtonLink href="mailto:contactadminfacile@gmail.com" variant="outline">
+              Nous contacter
+            </ButtonLink>
+            <ButtonLink href="/affiliation" variant="ghost">
+              Programme ambassadeur
+            </ButtonLink>
+          </div>
+          <p className="mt-3 text-sm text-slate-500">contactadminfacile@gmail.com</p>
         </div>
         <div>
           <h2 className="text-sm font-semibold text-slate-950">Produit</h2>
           <div className="mt-4 grid gap-3 text-sm text-slate-600">
             <Link href="/demarches">Démarches</Link>
             <Link href="/pricing">Tarifs</Link>
+            <Link href="/affiliation">Programme ambassadeur</Link>
             <Link href="/dashboard">Dashboard</Link>
           </div>
         </div>

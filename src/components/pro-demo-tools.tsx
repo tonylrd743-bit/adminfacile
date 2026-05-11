@@ -17,6 +17,8 @@ import type { LucideIcon } from "lucide-react";
 import type { jsPDF } from "jspdf";
 import type { ReactNode } from "react";
 import { Button } from "@/components/button";
+import { getProfileDisplayName, getProfileSignature, getProfileVatMention } from "@/lib/profile";
+import type { ProfessionalProfile } from "@/lib/profile";
 
 type ProToolId = "quote" | "invoice" | "client-email" | "payment-reminder" | "quote-reply" | "pro-assistant";
 
@@ -95,20 +97,20 @@ const tools: ProTool[] = [
   }
 ];
 
-export function ProDemoTools() {
+export function ProDemoTools({ profile }: { profile?: ProfessionalProfile | null }) {
   const [selectedToolId, setSelectedToolId] = useState<ProToolId>("quote");
-  const [values, setValues] = useState<ProValues>(() => createInitialValues("quote"));
-  const [result, setResult] = useState<DemoResult>(() => buildDemoResult(tools[0], createInitialValues("quote")));
+  const [values, setValues] = useState<ProValues>(() => createInitialValues("quote", profile));
+  const [result, setResult] = useState<DemoResult>(() => buildDemoResult(tools[0], createInitialValues("quote", profile), profile));
   const [copied, setCopied] = useState(false);
   const selectedTool = tools.find((tool) => tool.id === selectedToolId) ?? tools[0];
   const totals = useMemo(() => calculateTotals(values), [values]);
   const emailLinks = useMemo(() => buildEmailLinks(result.subject, result.body), [result]);
 
   function selectTool(tool: ProTool) {
-    const nextValues = createInitialValues(tool.id);
+    const nextValues = createInitialValues(tool.id, profile);
     setSelectedToolId(tool.id);
     setValues(nextValues);
-    setResult(buildDemoResult(tool, nextValues));
+    setResult(buildDemoResult(tool, nextValues, profile));
     setCopied(false);
   }
 
@@ -117,7 +119,7 @@ export function ProDemoTools() {
   }
 
   function generateDemo() {
-    setResult(buildDemoResult(selectedTool, values));
+    setResult(buildDemoResult(selectedTool, values, profile));
     setCopied(false);
   }
 
@@ -132,7 +134,7 @@ export function ProDemoTools() {
     const doc = new jsPDF();
 
     if (result.kind === "quote" || result.kind === "invoice") {
-      drawBusinessPdf(doc, selectedTool, values, totals);
+      drawBusinessPdf(doc, selectedTool, values, totals, profile);
     } else {
       drawTextPdf(doc, result);
     }
@@ -178,7 +180,9 @@ export function ProDemoTools() {
         <form action={generateDemo} className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
           <p className="text-sm font-semibold uppercase text-blue-600">Démo active</p>
           <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">{selectedTool.title}</h2>
-          <p className="mt-2 leading-7 text-slate-600">{selectedTool.description}</p>
+          <p className="mt-2 leading-7 text-slate-600">
+            {selectedTool.description} Profil utilisé : {getProfileDisplayName(profile)}.
+          </p>
 
           <div className="mt-6 space-y-6">
             <FieldGroup title="Votre entreprise">
@@ -255,7 +259,7 @@ export function ProDemoTools() {
           </div>
 
           {result.kind === "quote" || result.kind === "invoice" ? (
-            <BusinessDocumentPreview kind={result.kind} totals={totals} values={values} />
+            <BusinessDocumentPreview kind={result.kind} profile={profile} totals={totals} values={values} />
           ) : (
             <pre className="mt-5 min-h-80 whitespace-pre-wrap break-words rounded-3xl bg-slate-50 p-4 font-sans leading-7 text-slate-700 ring-1 ring-slate-100">
               {result.body}
@@ -294,7 +298,17 @@ export function ProDemoTools() {
   );
 }
 
-function BusinessDocumentPreview({ kind, values, totals }: { kind: ProToolId; values: ProValues; totals: ReturnType<typeof calculateTotals> }) {
+function BusinessDocumentPreview({
+  kind,
+  values,
+  totals,
+  profile
+}: {
+  kind: ProToolId;
+  values: ProValues;
+  totals: ReturnType<typeof calculateTotals>;
+  profile?: ProfessionalProfile | null;
+}) {
   const isInvoice = kind === "invoice";
   return (
     <div className="mt-5 overflow-hidden rounded-3xl border border-slate-200 bg-white">
@@ -355,7 +369,7 @@ function BusinessDocumentPreview({ kind, values, totals }: { kind: ProToolId; va
           <p className="font-semibold text-slate-950">{isInvoice ? "Mode de paiement" : "Conditions"}</p>
           <p className="mt-2">{values.paymentTerms}</p>
           <p className="mt-4 whitespace-pre-wrap">{values.details}</p>
-          <p className="mt-4 text-xs text-slate-500">{getVatMention(values.vatRate)}</p>
+          <p className="mt-4 text-xs text-slate-500">{getVatMention(values.vatRate, profile)}</p>
           <p className="mt-4 italic">Bon pour accord, date et signature :</p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm">
@@ -414,7 +428,7 @@ function InfoLine({ label, value, strong = false }: { label: string; value: stri
   );
 }
 
-function createInitialValues(toolId: ProToolId): ProValues {
+function createInitialValues(toolId: ProToolId, profile?: ProfessionalProfile | null): ProValues {
   const now = new Date();
   const future = new Date(now);
   future.setDate(now.getDate() + 30);
@@ -424,22 +438,22 @@ function createInitialValues(toolId: ProToolId): ProValues {
   const number = `${prefix}-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}`;
 
   const values = {
-    companyName: "AdminFacile Pro Services",
+    companyName: getProfileDisplayName(profile),
     companyAddress: "12 rue de la Gestion\n75009 Paris\nFrance",
-    companySiret: "SIREN : 000 000 000",
-    companyEmail: "contact@adminfacile.fr",
+    companySiret: profile?.siret ? `SIRET : ${profile.siret}` : "SIRET : à compléter",
+    companyEmail: profile?.professional_email || profile?.email || "contactadminfacile@gmail.com",
     clientName: "Client Exemple",
     clientAddress: "Adresse client\nFrance",
     documentNumber: number,
     documentDate: toInputDate(now),
     validUntil: toInputDate(future),
     dueDate: toInputDate(due),
-    service: "Prestation administrative professionnelle",
+    service: profile?.profession ? `Prestation ${profile.profession}` : "Prestation professionnelle",
     unit: "forfait",
     quantity: "1",
-    unitPrice: "450",
+    unitPrice: profile?.hourly_rate ? String(profile.hourly_rate) : "450",
     discount: "0",
-    vatRate: "20",
+    vatRate: profile?.vat_applicable ? "20" : "0",
     paymentTerms: "Paiement par virement sous 15 jours.",
     reminderLevel: "soft",
     details: "Document généré en mode démo. À relire, compléter et adapter avant tout envoi réel."
@@ -461,13 +475,13 @@ function createInitialValues(toolId: ProToolId): ProValues {
   return values;
 }
 
-function buildDemoResult(tool: ProTool, values: ProValues): DemoResult {
+function buildDemoResult(tool: ProTool, values: ProValues, profile?: ProfessionalProfile | null): DemoResult {
   const totals = calculateTotals(values);
   const title = tool.id === "invoice" ? `Facture ${values.documentNumber}` : tool.id === "quote" ? `Devis ${values.documentNumber}` : tool.title;
   return {
     title,
     subject: buildSubject(tool, values),
-    body: buildBody(tool, values, totals),
+    body: buildBody(tool, values, totals, profile),
     kind: tool.id
   };
 }
@@ -479,7 +493,7 @@ function buildSubject(tool: ProTool, values: ProValues) {
   return `${tool.title} - ${values.clientName}`;
 }
 
-function buildBody(tool: ProTool, values: ProValues, totals: ReturnType<typeof calculateTotals>) {
+function buildBody(tool: ProTool, values: ProValues, totals: ReturnType<typeof calculateTotals>, profile?: ProfessionalProfile | null) {
   if (tool.id === "quote" || tool.id === "invoice") {
     return `${tool.id === "invoice" ? "FACTURE" : "DEVIS"} ${values.documentNumber}
 
@@ -506,7 +520,7 @@ Prestation :
 Conditions :
 ${values.paymentTerms}
 
-${getVatMention(values.vatRate)}
+${getVatMention(values.vatRate, profile)}
 
 ${values.details}`;
   }
@@ -524,7 +538,7 @@ ${values.details}
 Je reste disponible pour toute précision et peux vous transmettre un document complémentaire si nécessaire.
 
 Cordialement,
-${values.companyName}`;
+${getProfileSignature(profile) || values.companyName}`;
   }
   if (tool.id === "quote-reply") {
     return `Bonjour ${values.clientName},
@@ -540,7 +554,7 @@ Prochaines étapes proposées :
 3. Établir un devis détaillé
 
 Cordialement,
-${values.companyName}`;
+${getProfileSignature(profile) || values.companyName}`;
   }
 
   return `Synthèse administrative Pro
@@ -599,7 +613,13 @@ function calculateTotals(values: ProValues) {
   return { quantity, unitPrice, totalHt, discountedHt, vatAmount, totalTtc };
 }
 
-function drawBusinessPdf(doc: jsPDF, tool: ProTool, values: ProValues, totals: ReturnType<typeof calculateTotals>) {
+function drawBusinessPdf(
+  doc: jsPDF,
+  tool: ProTool,
+  values: ProValues,
+  totals: ReturnType<typeof calculateTotals>,
+  profile?: ProfessionalProfile | null
+) {
   const isInvoice = tool.id === "invoice";
   const margin = 16;
   const width = doc.internal.pageSize.getWidth();
@@ -672,7 +692,7 @@ function drawBusinessPdf(doc: jsPDF, tool: ProTool, values: ProValues, totals: R
   y += 18;
   doc.setFontSize(9);
   doc.setFont("helvetica", "italic");
-  doc.text(split(doc, `${values.paymentTerms}\n${getVatMention(values.vatRate)}\n${values.details}\n\nBon pour accord, date et signature :`, width - margin * 2), margin, y);
+  doc.text(split(doc, `${values.paymentTerms}\n${getVatMention(values.vatRate, profile)}\n${values.details}\n\nBon pour accord, date et signature :`, width - margin * 2), margin, y);
 }
 
 function drawTextPdf(doc: jsPDF, result: DemoResult) {
@@ -727,7 +747,8 @@ function formatEuro(value: number) {
   return new Intl.NumberFormat("fr-FR", { currency: "EUR", style: "currency" }).format(value || 0);
 }
 
-function getVatMention(vatRate: string) {
+function getVatMention(vatRate: string, profile?: ProfessionalProfile | null) {
+  if (profile) return getProfileVatMention(profile);
   const rate = Number(vatRate || 0);
   if (rate <= 0) {
     return "TVA non applicable ou exonération à vérifier selon votre statut. Pour les micro-entrepreneurs : article 293 B du CGI si applicable.";

@@ -1,15 +1,14 @@
 import {
   ArrowRight,
   BriefcaseBusiness,
+  Calculator,
   Check,
   FileText,
   HelpCircle,
   Mail,
   ReceiptText,
-  ShieldCheck,
   Sparkles,
-  TimerReset,
-  Workflow
+  Users,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
@@ -18,75 +17,107 @@ import { CheckoutButton } from "@/components/checkout-button";
 import { DisclaimerBox } from "@/components/disclaimer-box";
 import { isStripePlanConfigured } from "@/lib/stripe-checkout";
 
-const discoveryFeatures = [
-  "1 dossier/mois",
-  "Prompts essentiels",
-  "Génération IA standard",
-  "Préparation email",
-  "PDF simple",
-  "Accès mobile",
-  "Historique limité",
-  "Onboarding simple",
-  "Tutoriel rapide",
-  "Exemples populaires"
+const plans = [
+  {
+    name: "Découverte",
+    price: "0€",
+    description: "Essayez gratuitement les outils professionnels d'AdminFacile.",
+    badge: "Essai",
+    features: [
+      "1 simulateur de chantier IA",
+      "1 génération de devis professionnel",
+      "1 email professionnel client",
+      "1 dossier administratif test",
+      "Prompts essentiels",
+      "PDF simple",
+      "Accès mobile"
+    ],
+    counters: [
+      ["Simulateur chantier", "1 restant"],
+      ["Devis professionnel", "1 restant"],
+      ["Email client", "1 restant"]
+    ],
+    action: (
+      <ButtonLink className="w-full" href="/signup" variant="outline">
+        Commencer l'essai gratuit
+        <ArrowRight className="h-4 w-4" />
+      </ButtonLink>
+    )
+  },
+  {
+    name: "Premium",
+    price: "9,99€/mois",
+    description: "Assez d'essais pour convaincre artisans, indépendants et auto-entrepreneurs.",
+    badge: "Le plus populaire",
+    featured: true,
+    features: [
+      "3 simulateurs de chantier IA par mois",
+      "3 générations de devis premium par mois",
+      "Emails professionnels illimités",
+      "Dossiers administratifs illimités",
+      "Génération IA avancée",
+      "PDF premium",
+      "Historique complet",
+      "Prompts premium",
+      "Préparation Gmail/Mail",
+      "Organisation des documents"
+    ],
+    counters: [
+      ["Simulateur chantier", "3/mois"],
+      ["Devis premium", "3/mois"],
+      ["Emails clients", "Illimités"]
+    ],
+    action: null
+  },
+  {
+    name: "Professionnel",
+    price: "29,99€/mois",
+    description: "L'espace business complet pour artisans, indépendants et petites entreprises.",
+    badge: "Business",
+    features: [
+      "Simulateurs chantier illimités",
+      "Devis illimités",
+      "Factures professionnelles",
+      "Relances automatiques",
+      "Assistant IA Pro",
+      "Outils entrepreneur",
+      "CRM client",
+      "Historique devis/factures",
+      "Statistiques simples",
+      "PDF ultra premium",
+      "Organisation entreprise",
+      "Automatisations IA futures"
+    ],
+    counters: [
+      ["Simulateur chantier", "Illimité"],
+      ["Devis / factures", "Illimité"],
+      ["Espace business", "Inclus"]
+    ],
+    action: (
+      <ButtonLink className="w-full" href="/dashboard/pro" variant="secondary">
+        Tester la démo Pro
+        <BriefcaseBusiness className="h-4 w-4" />
+      </ButtonLink>
+    )
+  }
 ];
 
-const premiumFeatures = [
-  "Dossiers illimités",
-  "Prompts premium France",
-  "Génération IA avancée",
-  "PDF premium",
-  "Historique complet",
-  "Préparation email intelligente",
-  "Organisation dossiers",
-  "Favoris",
-  "Prompts CAF / URSSAF / France Travail avancés",
-  "Suggestions automatiques",
-  "Mode mobile premium",
-  "Futures automatisations IA"
+const comparisonRows = [
+  ["Simulateur de chantier IA", "1 essai", "3/mois", "Illimité"],
+  ["Devis professionnels", "1 essai", "3/mois", "Illimité"],
+  ["Emails clients", "1 essai", "Illimités", "Illimités"],
+  ["Dossiers administratifs", "1 test", "Illimités", "Illimités"],
+  ["PDF premium", "Simple", "Premium", "Ultra premium"],
+  ["Espace business", "Non inclus", "Basique", "Complet"]
 ];
 
-const proFeatures = [
-  "Tout Premium inclus",
-  "Génération devis",
-  "Génération factures",
-  "Réponses clients",
-  "Préparation emails professionnels",
-  "Relances clients",
-  "Relances factures impayées",
-  "Stockage documents",
-  "Coffre administratif",
-  "Suivi administratif",
-  "Timeline dossiers",
-  "Export PDF professionnel",
-  "Modèles entreprise",
-  "Gestion URSSAF",
-  "Modèles ARCE entrepreneur",
-  "Dashboard business",
-  "Assistant entrepreneur IA",
-  "Simulateur chantier IA",
-  "Futures automatisations IA"
-];
-
-const automationItems = [
-  "Réponses email IA",
-  "Rappels administratifs",
-  "Classement automatique",
-  "Relances automatiques",
-  "Assistant entrepreneur IA",
-  "Suivi intelligent",
-  "Analyse documents IA",
-  "Gestion clients simplifiée"
-];
-
-const entrepreneurTools = [
+const businessTools = [
+  { title: "Simulateur chantier IA", icon: Calculator },
   { title: "Créer un devis", icon: FileText },
   { title: "Créer une facture", icon: ReceiptText },
   { title: "Préparer email client", icon: Mail },
-  { title: "Réponse demande devis", icon: BriefcaseBusiness },
-  { title: "Relance facture", icon: TimerReset },
-  { title: "Assistant administratif IA", icon: Sparkles },
-  { title: "Simulateur chantier IA", icon: BriefcaseBusiness }
+  { title: "CRM client", icon: Users },
+  { title: "Assistant administratif IA", icon: Sparkles }
 ];
 
 export default function PricingPage() {
@@ -98,158 +129,149 @@ export default function PricingPage() {
         <div className="mx-auto max-w-4xl text-center">
           <p className="text-sm font-semibold uppercase text-blue-600">Tarifs AdminFacile</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-            Un assistant administratif premium pour avancer avec méthode
+            Des outils administratifs et business prêts à tester
           </h1>
           <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-            AdminFacile transforme vos demandes administratives en dossiers structurés, emails prêts à envoyer et PDF
-            lisibles, sur mobile comme sur desktop.
+            Estimez un chantier, préparez un devis, rédigez un email client et structurez vos démarches dans un espace
+            professionnel pensé pour les indépendants français.
           </p>
         </div>
 
         {!premiumEnabled ? (
           <div className="mx-auto mt-8 max-w-3xl rounded-3xl border border-blue-100 bg-blue-50 p-5 text-center text-sm font-medium text-blue-900">
-            Paiement bientôt disponible. Le parcours gratuit reste testable pendant la configuration Stripe.
+            Paiement bientôt disponible. Les outils de démonstration restent accessibles sans paiement pendant la préparation Stripe.
           </div>
         ) : null}
 
         <div className="mt-12 grid gap-6 lg:grid-cols-3">
-          <PlanCard
-            action={
-              <ButtonLink className="w-full" href="/signup" variant="outline">
-                Commencer gratuitement
-                <ArrowRight className="h-4 w-4" />
-              </ButtonLink>
-            }
-            description="Pour tester AdminFacile avec un premier dossier administratif clair."
-            features={discoveryFeatures}
-            name="Découverte"
-            price="0€"
-          />
-          <PlanCard
-            action={<CheckoutButton disabled={!premiumEnabled} label="Passer Premium" plan="premium" />}
-            badge="Le plus populaire"
-            description="Votre assistant administratif personnel intelligent pour produire des dossiers sans limite."
-            featured
-            features={premiumFeatures}
-            name="Premium"
-            price="9,99€/mois"
-          />
-          <PlanCard
-            action={
-              <div className="space-y-2">
-                <ButtonLink className="w-full" href="/dashboard/pro" variant="secondary">
-                  <BriefcaseBusiness className="h-4 w-4" />
-                  Tester la démo Pro
-                </ButtonLink>
-                <p className="text-center text-sm font-medium text-slate-500">Aucun paiement requis pour la démo.</p>
-              </div>
-            }
-            badge="Business"
-            description="Pour auto-entrepreneurs, indépendants, artisans et petites entreprises."
-            features={proFeatures}
-            name="Professionnel"
-            price="29,99€/mois"
-          />
+          {plans.map((plan) => (
+            <PlanCard
+              action={
+                plan.name === "Premium" ? (
+                  <CheckoutButton disabled={!premiumEnabled} label="Passer Premium" plan="premium" />
+                ) : (
+                  plan.action
+                )
+              }
+              badge={plan.badge}
+              counters={plan.counters}
+              description={plan.description}
+              featured={plan.featured}
+              features={plan.features}
+              key={plan.name}
+              name={plan.name}
+              price={plan.price}
+            />
+          ))}
         </div>
       </section>
 
       <section className="border-y border-slate-200 bg-slate-50">
-        <div className="mx-auto grid max-w-7xl gap-6 px-4 py-14 sm:px-6 lg:grid-cols-3 lg:px-8">
-          <InfoCard
-            icon={Sparkles}
-            title="Pourquoi choisir AdminFacile"
-            text="Un produit conçu pour produire des demandes claires, rassurantes et exploitables, sans jargon inutile."
-          />
-          <InfoCard
-            icon={Workflow}
-            title="Comment ca fonctionne"
-            text="Choisissez une démarche, utilisez un prompt si besoin, générez le dossier, puis exportez le PDF ou préparez l'email."
-          />
-          <InfoCard
-            icon={ShieldCheck}
-            title="Sérieux et contrôle"
-            text="AdminFacile prépare vos contenus, mais vous gardez toujours la validation finale avant envoi ou dépôt."
-          />
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+            <div>
+              <p className="text-sm font-semibold uppercase text-blue-600">Programme Parrainage</p>
+              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+                Invitez vos contacts et gagnez votre abonnement
+              </h2>
+              <p className="mt-3 leading-7 text-slate-600">
+                Si plusieurs personnes découvrent AdminFacile grâce à vous et testent réellement les outils, votre mois Premium
+                peut être offert ou remboursé. Le système valorise les utilisateurs actifs, pas les invitations artificielles.
+              </p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                <ReferralMetric label="Filleuls actifs" value="2 / 3" />
+                <ReferralMetric label="Statut" value="Ambassadeur" />
+                <ReferralMetric label="Récompense" value="1 mois offert" />
+              </div>
+            </div>
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-blue-600">Progression parrainage</p>
+                  <h3 className="mt-1 text-2xl font-semibold text-slate-950">2 filleuls actifs validés</h3>
+                </div>
+                <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-bold text-white">Badge ambassadeur</span>
+              </div>
+              <div className="mt-6 h-3 rounded-full bg-slate-100">
+                <div className="h-3 w-2/3 rounded-full bg-blue-600" />
+              </div>
+              <p className="mt-4 text-sm leading-6 text-slate-600">
+                Encore 1 utilisateur actif pour déclencher l'avantage. Validation conseillée : compte créé, outil testé,
+                première génération terminée.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase text-blue-600">Outils entrepreneur</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-            Une base solide pour les indépendants et petites entreprises
-          </h2>
-          <p className="mt-3 leading-7 text-slate-600">
-            Les premiers outils administratifs business sont préparés dans l'interface produit et pourront être activés
-            progressivement.
-          </p>
+          <p className="text-sm font-semibold uppercase text-blue-600">Comparatif</p>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Choisissez le bon niveau d'usage</h2>
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {entrepreneurTools.map((tool) => (
-            <ComingSoonCard icon={tool.icon} key={tool.title} title={tool.title} />
-          ))}
+        <div className="mt-8 overflow-x-auto rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+          <table className="w-full min-w-[760px] text-sm">
+            <thead className="bg-slate-950 text-white">
+              <tr>
+                <th className="px-5 py-4 text-left">Fonctionnalité</th>
+                <th className="px-5 py-4 text-left">Découverte</th>
+                <th className="px-5 py-4 text-left">Premium</th>
+                <th className="px-5 py-4 text-left">Professionnel</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comparisonRows.map((row) => (
+                <tr className="border-b border-slate-200 last:border-0" key={row[0]}>
+                  {row.map((cell, index) => (
+                    <td className={index === 0 ? "px-5 py-4 font-semibold text-slate-950" : "px-5 py-4 text-slate-700"} key={cell}>
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
       <section className="border-y border-slate-200 bg-slate-950 text-white">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase text-blue-200">En développement</p>
-              <h2 className="mt-2 text-3xl font-semibold tracking-tight">Automatisations IA futures</h2>
-              <p className="mt-3 max-w-3xl leading-7 text-slate-300">
-                AdminFacile est pensé pour devenir un vrai poste de pilotage administratif intelligent.
-              </p>
-            </div>
-            <span className="w-fit rounded-full bg-blue-600 px-4 py-2 text-sm font-bold">En développement</span>
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase text-blue-200">Outils entrepreneur</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Un poste de travail business en construction</h2>
+            <p className="mt-3 leading-7 text-slate-300">
+              AdminFacile réunit progressivement estimation chantier, devis, factures, emails clients, relances et assistant IA Pro.
+            </p>
           </div>
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {automationItems.map((item) => (
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm font-semibold text-slate-100" key={item}>
-                {item}
-              </div>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {businessTools.map((tool) => (
+              <ToolCard icon={tool.icon} key={tool.title} title={tool.title} />
             ))}
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <div>
-            <p className="text-sm font-semibold uppercase text-blue-600">Avis utilisateurs</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Une expérience rassurante</h2>
-            <p className="mt-3 leading-7 text-slate-600">
-              Le design met l'accent sur la lisibilité, les actions mobiles et la clarté des prochaines étapes.
-            </p>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <Testimonial quote="J'ai compris quoi joindre et comment formuler ma demande sans tourner en rond." name="Utilisateur CAF" />
-            <Testimonial quote="La preparation email et le PDF donnent un rendu beaucoup plus professionnel." name="Micro-entrepreneur" />
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-5xl px-4 pb-14 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="text-center">
           <p className="text-sm font-semibold uppercase text-blue-600">FAQ</p>
           <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Questions fréquentes</h2>
         </div>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           <FaqItem
-            question="AdminFacile est-il un organisme officiel ?"
-            answer="Non. AdminFacile est un service privé d'assistance administrative et n'est pas affilié aux organismes publics."
+            question="Puis-je vraiment tester les outils Pro gratuitement ?"
+            answer="Oui. L'offre Découverte donne accès à un essai utile : simulateur chantier, devis professionnel et email client."
           />
           <FaqItem
-            question="L'application envoie-t-elle les emails automatiquement ?"
-            answer="Non. AdminFacile prépare uniquement le contenu. Vous vérifiez, ajoutez le destinataire et envoyez vous-même."
+            question="Comment fonctionne le parrainage ?"
+            answer="Le parrainage repose sur des utilisateurs actifs : compte créé, outil testé et génération réalisée. L'objectif est d'éviter les abus."
           />
           <FaqItem
-            question="Puis-je utiliser AdminFacile sur mobile ?"
-            answer="Oui. Les formulaires, le dashboard, le PDF et la préparation email sont conçus pour iPhone, Android et desktop."
+            question="Le simulateur chantier remplace-t-il un devis terrain ?"
+            answer="Non. Il donne une estimation indicative et professionnelle à partir des informations fournies. Le professionnel garde la validation finale."
           />
           <FaqItem
             question="Stripe est-il obligatoire pour tester ?"
-            answer="Non. Si Stripe n'est pas configuré, le paiement reste désactivé proprement et le parcours gratuit reste accessible."
+            answer="Non. Si Stripe n'est pas configuré, les boutons payants restent désactivables et les démos restent accessibles."
           />
         </div>
         <DisclaimerBox className="mt-10" />
@@ -263,6 +285,7 @@ function PlanCard({
   price,
   description,
   features,
+  counters,
   action,
   featured = false,
   badge
@@ -271,6 +294,7 @@ function PlanCard({
   price: string;
   description: string;
   features: string[];
+  counters: string[][];
   action: ReactNode;
   featured?: boolean;
   badge?: string;
@@ -289,6 +313,14 @@ function PlanCard({
         <h2 className="pr-28 text-2xl font-semibold">{name}</h2>
         <p className={featured ? "mt-3 min-h-14 text-slate-300" : "mt-3 min-h-14 text-slate-600"}>{description}</p>
         <p className="mt-6 text-4xl font-semibold tracking-tight">{price}</p>
+        <div className="mt-6 grid gap-2">
+          {counters.map(([label, value]) => (
+            <div className={featured ? "flex justify-between rounded-2xl bg-white/10 px-3 py-2 text-sm" : "flex justify-between rounded-2xl bg-slate-50 px-3 py-2 text-sm"} key={label}>
+              <span>{label}</span>
+              <span className="font-bold">{value}</span>
+            </div>
+          ))}
+        </div>
         <ul className="mt-6 flex-1 space-y-3">
           {features.map((feature) => (
             <li className={featured ? "flex gap-3 text-slate-100" : "flex gap-3 text-slate-700"} key={feature}>
@@ -303,39 +335,21 @@ function PlanCard({
   );
 }
 
-function InfoCard({ icon: Icon, title, text }: { icon: LucideIcon; title: string; text: string }) {
+function ReferralMetric({ label, value }: { label: string; value: string }) {
   return (
-    <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-        <Icon className="h-5 w-5" />
-      </span>
-      <h2 className="mt-5 text-xl font-semibold text-slate-950">{title}</h2>
-      <p className="mt-3 leading-7 text-slate-600">{text}</p>
-    </article>
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <p className="text-xs font-semibold uppercase text-slate-500">{label}</p>
+      <p className="mt-2 text-lg font-semibold text-slate-950">{value}</p>
+    </div>
   );
 }
 
-function ComingSoonCard({ icon: Icon, title }: { icon: LucideIcon; title: string }) {
+function ToolCard({ icon: Icon, title }: { icon: LucideIcon; title: string }) {
   return (
-    <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-      <div className="flex items-start gap-4">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-          <Icon className="h-5 w-5" />
-        </span>
-        <div>
-          <h3 className="font-semibold text-slate-950">{title}</h3>
-          <p className="mt-2 text-sm font-semibold text-blue-700">Bientôt disponible</p>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function Testimonial({ quote, name }: { quote: string; name: string }) {
-  return (
-    <article className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-      <p className="leading-7 text-slate-700">"{quote}"</p>
-      <p className="mt-4 text-sm font-semibold text-slate-950">{name}</p>
+    <article className="rounded-3xl border border-white/10 bg-white/5 p-5">
+      <Icon className="h-5 w-5 text-blue-300" />
+      <h3 className="mt-4 font-semibold text-white">{title}</h3>
+      <p className="mt-2 text-sm text-slate-300">Inclus dans l'écosystème Pro.</p>
     </article>
   );
 }

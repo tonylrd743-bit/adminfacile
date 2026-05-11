@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, Clock3, FilePlus2, Files, FolderLock, UserRound } from "lucide-react";
+import { BriefcaseBusiness, Calculator, Clock3, FilePlus2, Files, FolderLock, Gift, UserRound } from "lucide-react";
 import { ButtonLink } from "@/components/button";
 import { DashboardCard } from "@/components/dashboard-card";
 import { PdfButton } from "@/components/pdf-button";
@@ -39,7 +39,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
         <DashboardCard
           href="/dashboard/new"
           icon={FilePlus2}
@@ -54,8 +54,48 @@ export default async function DashboardPage() {
           title="Mes dossiers"
         />
         <DashboardCard href="/dashboard/pro" icon={BriefcaseBusiness} text="Testez devis, factures, relances et emails business." title="Outils Pro" />
+        <DashboardCard href="/dashboard/simulateur-chantier" icon={Calculator} text="1 essai gratuit pour estimer un chantier." title="Simulateur chantier" />
         <DashboardCard href="/dashboard/documents" icon={FolderLock} text="Centralisez vos justificatifs et documents utiles." title="Mes documents" />
         <DashboardCard href="/dashboard/account" icon={UserRound} text="Consultez vos informations de compte." title="Mon compte" />
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex items-start gap-4">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white">
+              <Calculator className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-sm font-semibold uppercase text-blue-600">Essai Découverte</p>
+              <h2 className="mt-1 text-xl font-semibold text-slate-950">Outils professionnels restants</h2>
+              <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                <UsagePill label="Chantier IA" value="1" />
+                <UsagePill label="Devis" value="1" />
+                <UsagePill label="Email client" value="1" />
+              </div>
+              <ButtonLink className="mt-5 w-full sm:w-auto" href="/pricing" variant="outline">
+                Passer Premium
+              </ButtonLink>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-3xl border border-blue-100 bg-blue-50 p-5 shadow-sm">
+          <div className="flex items-start gap-4">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white">
+              <Gift className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-sm font-semibold uppercase text-blue-700">Programme Parrainage</p>
+              <h2 className="mt-1 text-xl font-semibold text-slate-950">Invitez vos contacts et gagnez votre abonnement</h2>
+              <div className="mt-4 h-3 rounded-full bg-white">
+                <div className="h-3 w-2/3 rounded-full bg-blue-600" />
+              </div>
+              <p className="mt-3 text-sm leading-6 text-slate-700">
+                2 filleuls actifs sur 3. Les récompenses sont validées uniquement lorsque les nouveaux utilisateurs testent réellement l'application.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
@@ -111,6 +151,15 @@ export default async function DashboardPage() {
           </div>
         )}
       </section>
+    </div>
+  );
+}
+
+function UsagePill({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-slate-50 px-3 py-2 text-sm">
+      <p className="font-semibold text-slate-950">{value} restant</p>
+      <p className="mt-1 text-slate-500">{label}</p>
     </div>
   );
 }

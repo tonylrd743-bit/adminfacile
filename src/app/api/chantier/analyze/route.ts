@@ -42,6 +42,10 @@ Règles impératives :
 - ne jamais casser les prix du marché
 - ne jamais donner de prix absurdes ou trop vagues
 - tenir compte du temps, volume, hauteur, accès, difficulté, matériel, déchets, déplacement, produits et main d'œuvre
+- pour une haie très haute, dense ou large, intégrer temps de coupe, manutention, broyage ou évacuation
+- pour un nettoyage karcher, intégrer surface, préparation, produits éventuels, accès à l'eau et temps de finition
+- afficher une fourchette basse/haute et un prix conseillé crédible
+- style attendu : "Pour cette prestation, un tarif cohérent en France se situe entre 1300€ et 1800€ selon l'accès au chantier, l'évacuation des déchets et le temps de travail. Un prix conseillé serait d'environ 1500€ TTC."
 - si des photos sont fournies, analyser prudemment ce qui est visible : végétation, volume, accès, état général, difficulté
 - rappeler que l'estimation reste indicative et basée sur les informations fournies
 - répondre uniquement en JSON conforme au schéma demandé`;

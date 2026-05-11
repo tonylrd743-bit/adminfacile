@@ -17,18 +17,18 @@ import { StepCard } from "@/components/step-card";
 const features = [
   {
     icon: ClipboardList,
-    title: "Dossiers mieux préparés",
-    text: "L'assistant transforme vos réponses en checklist, étapes et documents à rassembler."
+    title: "Dossiers structurés",
+    text: "AdminFacile transforme vos informations en dossier clair, exploitable et organisé par priorité."
   },
   {
     icon: FileText,
-    title: "Lettre prête à copier",
-    text: "Vous obtenez une base de courrier claire, structurée et adaptée à votre situation."
+    title: "Courriers professionnels",
+    text: "Obtenez une base de lettre propre, factuelle et adaptée au destinataire administratif."
   },
   {
     icon: FolderLock,
-    title: "Documents au même endroit",
-    text: "Le coffre-fort vous aide à centraliser vos justificatifs pendant la préparation."
+    title: "Espace centralisé",
+    text: "Retrouvez vos dossiers, documents et exports au même endroit dans votre espace privé."
   }
 ];
 
@@ -43,7 +43,7 @@ const faqs = [
   },
   {
     q: "Quelles démarches sont disponibles ?",
-    a: "Le MVP couvre CAF, RSA et prime d'activité, avec une architecture prévue pour ajouter d'autres démarches."
+    a: "AdminFacile couvre les démarches administratives courantes : CAF, RSA, logement, France Travail, URSSAF, impôts, CPAM, retraite et courriers."
   },
   {
     q: "Mes clés API sont-elles exposées ?",
@@ -55,17 +55,17 @@ export default function HomePage() {
   return (
     <main>
       <section className="overflow-hidden bg-white">
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:px-8 lg:py-24">
           <div className="flex flex-col justify-center">
-            <p className="inline-flex w-fit rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">
-              Assistant administratif IA pour particuliers en France
+            <p className="inline-flex w-fit rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700">
+              Assistant administratif IA pour particuliers et indépendants
             </p>
             <h1 className="mt-6 max-w-4xl text-5xl font-semibold tracking-tight text-slate-950 sm:text-6xl lg:text-7xl">
               Simplifiez vos démarches administratives en quelques minutes
             </h1>
             <p className="mt-6 max-w-2xl text-xl leading-9 text-slate-600">
-              AdminFacile vous aide à préparer vos dossiers CAF, RSA, prime d’activité et courriers administratifs
-              grâce à un assistant intelligent simple et sécurisé.
+              AdminFacile vous aide à préparer des dossiers administratifs sérieux, des courriers structurés, des PDF
+              lisibles et des emails prêts à relire avant envoi.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <ButtonLink href="/signup">
@@ -75,10 +75,10 @@ export default function HomePage() {
                 Voir les démarches
               </ButtonLink>
             </div>
-            <div className="mt-8 grid max-w-xl gap-3 text-sm font-medium text-slate-600 sm:grid-cols-3">
+            <div className="mt-8 grid max-w-2xl gap-3 text-sm font-medium text-slate-600 sm:grid-cols-3">
               <span className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-blue-600" />
-                Sans jargon
+                Documents structurés
               </span>
               <span className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-blue-600" />
@@ -86,7 +86,7 @@ export default function HomePage() {
               </span>
               <span className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-blue-600" />
-                Données protégées
+                Envoi toujours manuel
               </span>
             </div>
           </div>
@@ -96,16 +96,16 @@ export default function HomePage() {
               <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-5">
                 <div>
                   <p className="text-sm font-semibold text-blue-600">Aperçu dossier</p>
-                  <h2 className="mt-1 text-2xl font-semibold text-slate-950">Prime d'activité</h2>
-                  <p className="mt-2 text-sm leading-6 text-slate-500">Checklist, lettre et étapes en un seul espace.</p>
+                  <h2 className="mt-1 text-2xl font-semibold text-slate-950">Demande administrative</h2>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">Résumé, lettre, checklist et étapes en un seul espace.</p>
                 </div>
                 <Sparkles className="h-8 w-8 text-blue-600" />
               </div>
               <div className="mt-5 space-y-3">
                 {[
-                  "Situation résumée clairement",
+                  "Situation reformulée clairement",
                   "Documents classés par priorité",
-                  "Lettre administrative prête à copier",
+                  "Lettre prête à relire et envoyer",
                   "Avertissement légal visible"
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4">
@@ -138,14 +138,14 @@ export default function HomePage() {
 
       <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="Comment ça marche"
-          text="Le produit reste volontairement simple : vous répondez, l'assistant structure, vous téléchargez."
+          eyebrow="Méthode"
+          text="Le produit reste volontairement simple : vous répondez, l'assistant structure, vous validez."
           title="Trois étapes pour avancer"
         />
         <div className="mx-auto mt-12 grid max-w-6xl gap-6 md:grid-cols-3">
-          <StepCard step="1" text="Sélectionnez CAF, RSA ou prime d'activité." title="Choisissez la démarche" />
+          <StepCard step="1" text="Choisissez une démarche ou partez d'un prompt pré-écrit." title="Cadrez la demande" />
           <StepCard step="2" text="Décrivez votre situation avec des champs simples et guidés." title="Ajoutez vos informations" />
-          <StepCard step="3" text="Relisez le résumé, la checklist, la lettre et exportez en PDF." title="Récupérez votre dossier" />
+          <StepCard step="3" text="Relisez le résumé, la lettre, le PDF et l'email préparé." title="Validez le dossier" />
         </div>
       </section>
 
@@ -154,7 +154,7 @@ export default function HomePage() {
           <div>
             <p className="text-sm font-semibold uppercase text-blue-300">Sécurité</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-              Un MVP pensé pour protéger les accès et clarifier les limites
+              Un espace privé pensé pour protéger les accès et clarifier les limites
             </h2>
             <p className="mt-4 leading-8 text-slate-300">
               Les informations sensibles restent côté serveur. Les pages privées vérifient la session et le disclaimer
@@ -164,9 +164,9 @@ export default function HomePage() {
           <div className="grid gap-4 sm:grid-cols-2">
             {[
               { Icon: LockKeyhole, label: "Authentification Supabase" },
-              { Icon: ShieldCheck, label: "RLS recommandé" },
-              { Icon: FolderLock, label: "Bucket documents privé" },
-              { Icon: Sparkles, label: "Prompt IA prudent" }
+              { Icon: ShieldCheck, label: "Accès privé au dashboard" },
+              { Icon: FolderLock, label: "Documents centralisés" },
+              { Icon: Sparkles, label: "Génération IA prudente" }
             ].map(({ Icon, label }) => (
               <div className="rounded-3xl border border-white/10 bg-white/5 p-5" key={label}>
                 <Icon className="h-6 w-6 text-blue-300" />
@@ -180,10 +180,10 @@ export default function HomePage() {
       <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-6xl items-center gap-8 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm md:grid-cols-[1fr_auto] md:p-8">
           <div>
-            <p className="text-sm font-semibold uppercase text-blue-600">Prix</p>
+            <p className="text-sm font-semibold uppercase text-blue-600">Tarifs</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Commencez gratuitement</h2>
             <p className="mt-3 max-w-2xl leading-8 text-slate-600">
-              Puis passez au dossier complet ou au premium lorsque vous avez besoin de générer plus de documents.
+              Testez le parcours, puis activez les offres payantes lorsque Stripe est prêt.
             </p>
           </div>
           <ButtonLink href="/pricing">Voir les tarifs</ButtonLink>

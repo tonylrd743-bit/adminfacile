@@ -34,7 +34,7 @@ export function EmailPreparer({ result, formData }: { result: AiResult; formData
     <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       <div>
         <p className="text-sm font-semibold uppercase text-blue-600">Envoi manuel</p>
-        <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Preparer l'email</h2>
+        <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Préparer l'email</h2>
         <p className="mt-2 max-w-2xl leading-7 text-slate-600">
           Copiez le message ou ouvrez-le dans votre application mail avant de l'envoyer. AdminFacile ne l'envoie jamais
           automatiquement.
@@ -63,7 +63,7 @@ export function EmailPreparer({ result, formData }: { result: AiResult; formData
         <div className="flex w-full flex-col gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-4">
           <Button className="min-h-[44px] w-full" onClick={() => copyEmail()} type="button" variant="outline">
             {copied === "email" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-            {copied === "email" ? "Email copie" : "Copier l'email"}
+            {copied === "email" ? "Email copié" : "Copier l'email"}
           </Button>
           <a
             className="focus-ring inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-50"
@@ -83,13 +83,13 @@ export function EmailPreparer({ result, formData }: { result: AiResult; formData
           </a>
           <Button className="min-h-[44px] w-full" onClick={shareEmail} type="button" variant="secondary">
             {copied === "share" ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
-            {copied === "share" ? "Email copie" : "Partager"}
+            {copied === "share" ? "Email copié" : "Partager"}
           </Button>
         </div>
 
         {copied === "share" ? (
           <p className="rounded-2xl bg-blue-50 px-4 py-3 text-sm font-medium text-blue-800">
-            Partage non disponible, email copie.
+            Partage non disponible, email copié.
           </p>
         ) : null}
       </div>
@@ -103,23 +103,23 @@ function buildEmail(result: AiResult, formData: RequestFormData) {
   const subject = buildEmailSubject(procedureLabel, formData);
   const documents = result.documentsNecessaires.length
     ? result.documentsNecessaires.map((document) => `- ${stripListMarker(document)}`).join("\n")
-    : "- A completer selon les justificatifs demandes par l'organisme";
+    : "- À compléter selon les justificatifs demandés par l'organisme";
 
   const body = `Bonjour,
 
-Je me permets de vous contacter concernant ma demande relative a ${procedureLabel}.
+Je me permets de vous contacter concernant ma demande relative à ${procedureLabel}.
 
-Vous trouverez ci-dessous les elements structures de ma demande, prepares afin de faciliter son traitement.
+Vous trouverez ci-dessous les éléments structurés de ma demande, préparés afin de faciliter son traitement.
 
 ${result.lettre}
 
-Pieces jointes a ajouter :
+Pièces jointes à ajouter :
 ${documents}
 
-Je reste disponible pour transmettre tout complement utile et vous remercie par avance pour votre retour.
+Je reste disponible pour transmettre tout complément utile et vous remercie par avance pour votre retour.
 
 Cordialement,
-${senderName || "[Nom Prenom]"}`;
+${senderName || "[Nom Prénom]"}`;
 
   const encodedSubject = encodeURIComponent(subject);
   const encodedBody = encodeURIComponent(body);

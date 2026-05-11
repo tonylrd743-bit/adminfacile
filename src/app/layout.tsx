@@ -7,7 +7,7 @@ import { Header } from "@/components/header";
 export const metadata: Metadata = {
   title: "AdminFacile - Assistant administratif IA",
   description:
-    "AdminFacile aide les particuliers en France a preparer leurs dossiers CAF, RSA, prime d'activite et courriers administratifs."
+    "AdminFacile aide les particuliers et entrepreneurs en France à préparer des démarches administratives, courriers, PDF et emails professionnels."
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

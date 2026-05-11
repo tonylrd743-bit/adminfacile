@@ -162,8 +162,8 @@ export function ChantierSimulator({ profile }: { profile?: ProfessionalProfile |
 
   return (
     <div className="space-y-8">
-      <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <section className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+        <div className="min-w-0 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
           <p className="text-sm font-semibold uppercase text-blue-600">Analyse professionnelle</p>
           <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Informations de prestation</h2>
           <p className="mt-2 leading-7 text-slate-600">
@@ -314,10 +314,10 @@ function ResultPanel({
 }) {
   if (!result) {
     return (
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <section className="min-w-0 overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <p className="text-sm font-semibold uppercase text-blue-600">Résultat</p>
-        <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Estimation de prestation</h2>
-        <div className="mt-5 rounded-3xl bg-slate-50 p-6 leading-7 text-slate-600 ring-1 ring-slate-100">
+        <h2 className="mt-1 break-words text-2xl font-semibold tracking-tight text-slate-950">Estimation de prestation</h2>
+        <div className="mt-5 rounded-3xl bg-slate-50 p-5 leading-7 text-slate-600 ring-1 ring-slate-100 sm:p-6">
           L'estimation s'affichera ici avec un prix conseillé, une justification professionnelle, un récapitulatif et des conseils de rentabilité adaptés au métier.
         </div>
       </section>
@@ -325,58 +325,39 @@ function ResultPanel({
   }
 
   return (
-    <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <section className="min-w-0 overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       <p className="text-sm font-semibold uppercase text-blue-600">Résultat professionnel</p>
-      <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">{result.title}</h2>
-      <div className="mt-5 rounded-3xl bg-slate-950 p-5 text-white">
+      <h2 className="mt-1 max-w-full break-words text-2xl font-semibold tracking-tight text-slate-950">{result.title}</h2>
+      <div className="mt-5 overflow-hidden rounded-3xl bg-slate-950 p-5 text-white">
         <p className="text-sm font-semibold text-blue-200">Estimation conseillée</p>
-        <p className="mt-2 text-3xl font-semibold tracking-tight">{result.estimation}</p>
-        <p className="mt-3 leading-7 text-slate-300">{result.summary}</p>
+        <p className="mt-2 break-words text-2xl font-semibold tracking-tight sm:text-3xl">{result.estimation}</p>
+        <p className="mt-3 max-w-3xl break-words leading-7 text-slate-300">{result.summary}</p>
       </div>
 
       <div className="mt-5 rounded-3xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-950">
         <p className="font-semibold">Adaptation métier</p>
-        <p className="mt-1">{result.businessContext}</p>
+        <p className="mt-1 break-words">{result.businessContext}</p>
       </div>
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-        {["Main d'œuvre", "Déplacement", "Difficulté", "Équipement", "Temps estimé"].map((badge) => (
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-700" key={badge}>
-            {badge === "Difficulté" ? `${badge}: ${result.difficulty}` : badge === "Temps estimé" ? result.estimatedTime : badge}
-          </div>
-        ))}
+      <div className="mt-5 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
+        <MetricCard label="Main d'œuvre" value="Incluse" />
+        <MetricCard label="Déplacement" value="À intégrer" />
+        <MetricCard label="Difficulté" value={result.difficulty} />
+        <MetricCard label="Équipement" value="Selon prestation" />
+        <MetricCard label="Temps estimé" value={result.estimatedTime} />
       </div>
 
-      <div className="mt-6 overflow-x-auto rounded-3xl border border-slate-200">
-        <table className="w-full min-w-[560px] text-sm">
-          <thead className="bg-blue-600 text-white">
-            <tr>
-              <th className="px-4 py-3 text-left">Poste</th>
-              <th className="px-4 py-3 text-left">Détail</th>
-              <th className="px-4 py-3 text-right">Montant</th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.recapRows.map((row) => (
-              <tr className="border-b border-slate-200 last:border-0" key={`${row.label}-${row.amount}`}>
-                <td className="px-4 py-3 font-semibold text-slate-950">{row.label}</td>
-                <td className="px-4 py-3 text-slate-600">{row.detail}</td>
-                <td className="px-4 py-3 text-right font-semibold text-slate-950">{row.amount}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <EstimateTable rows={result.recapRows} />
 
       <Section title="Pourquoi ce prix" items={result.whyThisPrice} />
       <Section title="Conseils professionnels" items={result.professionalAdvice} />
-      <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+      <div className="mt-5 min-w-0 rounded-3xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
         <p className="text-sm font-semibold uppercase text-slate-500">Marché France</p>
-        <p className="mt-2 leading-7 text-slate-700">{result.marketPosition}</p>
-        <p className="mt-4 text-sm font-semibold text-blue-700">Rentabilité estimée : {result.profitability}</p>
+        <p className="mt-2 break-words leading-7 text-slate-700">{result.marketPosition}</p>
+        <p className="mt-4 break-words text-sm font-semibold text-blue-700">Rentabilité estimée : {result.profitability}</p>
       </div>
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+      <div className="mt-5 grid min-w-0 gap-3 sm:grid-cols-2">
         <Button className="w-full" onClick={onCopy} type="button" variant="outline">
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
           {copied ? "Estimation copiée" : "Copier l'estimation"}
@@ -385,11 +366,11 @@ function ResultPanel({
           <Download className="h-4 w-4" />
           Télécharger le PDF
         </Button>
-        <a className="focus-ring inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-50" href={emailLinks.mailtoUrl}>
+        <a className="focus-ring inline-flex min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-50" href={emailLinks.mailtoUrl}>
           <Mail className="h-4 w-4" />
           Préparer l'email client
         </a>
-        <a className="focus-ring inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800" href={emailLinks.gmailUrl} rel="noopener noreferrer" target="_blank">
+        <a className="focus-ring inline-flex min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-full bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800" href={emailLinks.gmailUrl} rel="noopener noreferrer" target="_blank">
           <ExternalLink className="h-4 w-4" />
           Gmail
         </a>
@@ -404,16 +385,73 @@ function ResultPanel({
 
 function Section({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="mt-5 rounded-3xl border border-slate-200 bg-white p-5">
+    <div className="mt-5 min-w-0 rounded-3xl border border-slate-200 bg-white p-4 sm:p-5">
       <h3 className="font-semibold text-slate-950">{title}</h3>
       <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-700">
         {items.map((item) => (
-          <li className="flex gap-2" key={item}>
+          <li className="flex min-w-0 gap-2" key={item}>
             <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600" />
-            {item}
+            <span className="min-w-0 break-words">{item}</span>
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function MetricCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex min-h-[92px] min-w-0 flex-col justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <p className="text-xs font-bold uppercase text-slate-500">{label}</p>
+      <p className="mt-3 max-h-10 overflow-hidden break-words text-sm font-semibold leading-5 text-slate-950">{value || "-"}</p>
+    </div>
+  );
+}
+
+function EstimateTable({ rows }: { rows: ChantierEstimateResult["recapRows"] }) {
+  return (
+    <div className="mt-6 min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white">
+      <div className="border-b border-slate-200 bg-slate-950 px-4 py-3 text-white sm:px-5">
+        <h3 className="text-sm font-semibold">Tableau d'estimation</h3>
+      </div>
+
+      <div className="hidden md:block">
+        <table className="w-full table-fixed text-sm">
+          <colgroup>
+            <col className="w-[26%]" />
+            <col className="w-[49%]" />
+            <col className="w-[25%]" />
+          </colgroup>
+          <thead className="bg-slate-50 text-xs font-bold uppercase text-slate-500">
+            <tr>
+              <th className="px-5 py-3 text-left">Poste</th>
+              <th className="px-5 py-3 text-left">Détail</th>
+              <th className="px-5 py-3 text-right">Montant</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr className="border-t border-slate-100 align-top" key={`${row.label}-${row.amount}`}>
+                <td className="break-words px-5 py-4 font-semibold text-slate-950">{row.label}</td>
+                <td className="break-words px-5 py-4 leading-6 text-slate-600">{row.detail}</td>
+                <td className="break-words px-5 py-4 text-right font-semibold text-slate-950">{row.amount}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="divide-y divide-slate-200 md:hidden">
+        {rows.map((row) => (
+          <article className="min-w-0 p-4" key={`${row.label}-${row.amount}`}>
+            <div className="flex min-w-0 items-start justify-between gap-3">
+              <h4 className="min-w-0 break-words text-sm font-semibold text-slate-950">{row.label}</h4>
+              <p className="shrink-0 text-right text-sm font-bold text-blue-700">{row.amount}</p>
+            </div>
+            <p className="mt-2 break-words text-sm leading-6 text-slate-600">{row.detail}</p>
+          </article>
+        ))}
+      </div>
     </div>
   );
 }

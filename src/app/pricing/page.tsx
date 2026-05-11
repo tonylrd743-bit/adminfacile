@@ -24,7 +24,7 @@ const plans = [
     description: "Essayez gratuitement les outils professionnels d'AdminFacile.",
     badge: "Essai",
     features: [
-      "1 simulateur de chantier IA",
+      "1 simulateur de prestation IA",
       "1 génération de devis professionnel",
       "1 email professionnel client",
       "1 dossier administratif test",
@@ -33,7 +33,7 @@ const plans = [
       "Accès mobile"
     ],
     counters: [
-      ["Simulateur chantier", "1 restant"],
+      ["Simulateur prestation", "1 restant"],
       ["Devis professionnel", "1 restant"],
       ["Email client", "1 restant"]
     ],
@@ -47,11 +47,11 @@ const plans = [
   {
     name: "Premium",
     price: "9,99€/mois",
-    description: "Assez d'essais pour convaincre artisans, indépendants et auto-entrepreneurs.",
+    description: "Assez d'essais pour convaincre indépendants, artisans, consultants et petites entreprises.",
     badge: "Le plus populaire",
     featured: true,
     features: [
-      "3 simulateurs de chantier IA par mois",
+      "3 simulateurs de prestation IA par mois",
       "3 générations de devis premium par mois",
       "Emails professionnels illimités",
       "Dossiers administratifs illimités",
@@ -63,7 +63,7 @@ const plans = [
       "Organisation des documents"
     ],
     counters: [
-      ["Simulateur chantier", "3/mois"],
+      ["Simulateur prestation", "3/mois"],
       ["Devis premium", "3/mois"],
       ["Emails clients", "Illimités"]
     ],
@@ -72,10 +72,10 @@ const plans = [
   {
     name: "Professionnel",
     price: "29,99€/mois",
-    description: "L'espace business complet pour artisans, indépendants et petites entreprises.",
+    description: "L'espace business complet pour prestataires, indépendants et petites entreprises.",
     badge: "Business",
     features: [
-      "Simulateurs chantier illimités",
+      "Simulateurs de prestation illimités",
       "Devis illimités",
       "Factures professionnelles",
       "Relances automatiques",
@@ -89,7 +89,7 @@ const plans = [
       "Automatisations IA futures"
     ],
     counters: [
-      ["Simulateur chantier", "Illimité"],
+      ["Simulateur prestation", "Illimité"],
       ["Devis / factures", "Illimité"],
       ["Espace business", "Inclus"]
     ],
@@ -103,7 +103,7 @@ const plans = [
 ];
 
 const comparisonRows = [
-  ["Simulateur de chantier IA", "1 essai", "3/mois", "Illimité"],
+  ["Simulateur de prestation IA", "1 essai", "3/mois", "Illimité"],
   ["Devis professionnels", "1 essai", "3/mois", "Illimité"],
   ["Emails clients", "1 essai", "Illimités", "Illimités"],
   ["Dossiers administratifs", "1 test", "Illimités", "Illimités"],
@@ -112,7 +112,7 @@ const comparisonRows = [
 ];
 
 const businessTools = [
-  { title: "Simulateur chantier IA", icon: Calculator },
+  { title: "Simulateur prestation IA", icon: Calculator },
   { title: "Créer un devis", icon: FileText },
   { title: "Créer une facture", icon: ReceiptText },
   { title: "Préparer email client", icon: Mail },
@@ -132,8 +132,8 @@ export default function PricingPage() {
             Des outils administratifs et business prêts à tester
           </h1>
           <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-            Estimez un chantier, préparez un devis, rédigez un email client et structurez vos démarches dans un espace
-            professionnel pensé pour les indépendants français.
+            Estimez une prestation, préparez un devis, rédigez un email client et structurez vos démarches dans un espace
+            professionnel pensé pour les indépendants, prestataires et petites entreprises françaises.
           </p>
         </div>
 
@@ -240,7 +240,7 @@ export default function PricingPage() {
             <p className="text-sm font-semibold uppercase text-blue-200">Outils entrepreneur</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight">Un poste de travail business en construction</h2>
             <p className="mt-3 leading-7 text-slate-300">
-              AdminFacile réunit progressivement estimation chantier, devis, factures, emails clients, relances et assistant IA Pro.
+              AdminFacile réunit progressivement estimation de prestation, devis, factures, emails clients, relances et assistant IA Pro.
             </p>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -259,14 +259,14 @@ export default function PricingPage() {
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           <FaqItem
             question="Puis-je vraiment tester les outils Pro gratuitement ?"
-            answer="Oui. L'offre Découverte donne accès à un essai utile : simulateur chantier, devis professionnel et email client."
+            answer="Oui. L'offre Découverte donne accès à un essai utile : simulateur de prestation, devis professionnel et email client."
           />
           <FaqItem
             question="Comment fonctionne le parrainage ?"
             answer="Le parrainage repose sur des utilisateurs actifs : compte créé, outil testé et génération réalisée. L'objectif est d'éviter les abus."
           />
           <FaqItem
-            question="Le simulateur chantier remplace-t-il un devis terrain ?"
+            question="Le simulateur remplace-t-il un devis validé ?"
             answer="Non. Il donne une estimation indicative et professionnelle à partir des informations fournies. Le professionnel garde la validation finale."
           />
           <FaqItem

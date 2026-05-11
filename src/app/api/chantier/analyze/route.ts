@@ -8,9 +8,13 @@ export const runtime = "nodejs";
 
 const requestSchema = z.object({
   description: z.string().trim().min(10),
-  dimensions: z.string().trim().min(1),
+  serviceType: z.string().trim().optional().default(""),
+  businessActivity: z.string().trim().optional().default(""),
+  estimatedTimeInput: z.string().trim().optional().default(""),
+  materials: z.string().trim().optional().default(""),
+  dimensions: z.string().trim().optional().default(""),
   travelDistance: z.string().trim().optional().default(""),
-  services: z.array(z.string()).min(1),
+  services: z.array(z.string()).optional().default([]),
   images: z.array(z.string().startsWith("data:image/")).max(4).optional().default([])
 });
 
@@ -19,6 +23,7 @@ const resultSchema = z.object({
   estimation: z.string(),
   priceMin: z.number(),
   priceMax: z.number(),
+  businessContext: z.string(),
   estimatedTime: z.string(),
   profitability: z.string(),
   difficulty: z.enum(["Faible", "Moyenne", "Élevée", "Complexe"]),
@@ -34,19 +39,22 @@ const resultSchema = z.object({
   quoteDetails: z.string()
 });
 
-const systemPrompt = `Tu es un estimateur chantier professionnel pour artisans en France.
-Tu raisonnes comme un artisan expérimenté, un gestionnaire chantier et un comptable bâtiment.
-Tu dois produire une estimation rentable, réaliste, cohérente avec les prix pratiqués en France.
+const systemPrompt = `Tu es un estimateur professionnel polyvalent pour indépendants, artisans, consultants, sociétés de services et petites entreprises en France.
+Tu raisonnes comme un professionnel expérimenté, un chargé d'affaires et un responsable administratif.
+Tu dois produire une estimation rentable, réaliste, cohérente avec le métier indiqué, les prix pratiqués en France et la valeur livrée au client.
 
 Règles impératives :
 - ne jamais casser les prix du marché
 - ne jamais donner de prix absurdes ou trop vagues
-- tenir compte du temps, volume, hauteur, accès, difficulté, matériel, déchets, déplacement, produits et main d'œuvre
-- pour une haie très haute, dense ou large, intégrer temps de coupe, manutention, broyage ou évacuation
-- pour un nettoyage karcher, intégrer surface, préparation, produits éventuels, accès à l'eau et temps de finition
+- adapter le raisonnement au métier : bâtiment, nettoyage, jardinage, consulting, digital, livraison, dépannage, coaching, administratif, commerce ou autre
+- tenir compte du temps, volume, surface, accès, difficulté, matériel, déplacement, sous-traitance, produits, fournitures, livrables et main d'œuvre lorsque c'est pertinent
+- pour le bâtiment, raisonner en surface, ml, matériaux, préparation, protection, pose, finitions et accès
+- pour le nettoyage, raisonner en surface, état initial, produits, temps, fréquence, accès et contraintes horaires
+- pour le conseil ou le digital, raisonner en cadrage, livrables, valeur, nombre de jours, réunions et expertise
+- pour le jardinage ou les espaces extérieurs, raisonner en végétaux, surfaces, accès, déchets verts, matériel et évacuation
 - afficher une fourchette basse/haute et un prix conseillé crédible
-- style attendu : "Pour cette prestation, un tarif cohérent en France se situe entre 1300€ et 1800€ selon l'accès au chantier, l'évacuation des déchets et le temps de travail. Un prix conseillé serait d'environ 1500€ TTC."
-- si des photos sont fournies, analyser prudemment ce qui est visible : végétation, volume, accès, état général, difficulté
+- style attendu : "Pour cette prestation, un tarif cohérent en France se situe entre 900€ et 1 200€ selon le périmètre, les contraintes, le temps de travail et les fournitures. Un prix conseillé serait d'environ 1 050€ TTC."
+- si des photos sont fournies, analyser prudemment ce qui est visible : état général, volume, accès, complexité, matériel ou contraintes apparentes
 - rappeler que l'estimation reste indicative et basée sur les informations fournies
 - répondre uniquement en JSON conforme au schéma demandé`;
 
@@ -69,7 +77,7 @@ export async function POST(request: Request) {
 
   const parsed = requestSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Description, dimensions et prestations sont obligatoires." }, { status: 400 });
+    return NextResponse.json({ error: "Décrivez la prestation à estimer avec suffisamment de contexte." }, { status: 400 });
   }
 
   const inputText = buildPrompt(parsed.data);
@@ -86,7 +94,7 @@ export async function POST(request: Request) {
         { role: "user", content }
       ],
       text: {
-        format: zodTextFormat(resultSchema, "chantier_estimate")
+        format: zodTextFormat(resultSchema, "service_estimate")
       }
     });
 
@@ -104,24 +112,36 @@ export async function POST(request: Request) {
     if (status && status >= 500) {
       return NextResponse.json({ error: "OpenAI est temporairement indisponible. Réessayez dans quelques minutes." }, { status: 503 });
     }
-    return NextResponse.json({ error: "Impossible d'analyser le chantier pour le moment." }, { status: 502 });
+    return NextResponse.json({ error: "Impossible d'analyser la prestation pour le moment." }, { status: 502 });
   }
 }
 
 function buildPrompt(data: z.infer<typeof requestSchema>) {
-  return `Analyse ce chantier et produis une estimation professionnelle.
+  return `Analyse cette prestation et produis une estimation professionnelle adaptée au métier.
+
+Métier ou activité de l'utilisateur :
+${data.businessActivity || "Non précisé"}
+
+Type de prestation :
+${data.serviceType || "Non précisé"}
 
 Description utilisateur :
 ${data.description}
 
-Dimensions :
-${data.dimensions}
+Dimensions, surfaces, volumes ou quantités :
+${data.dimensions || "Non précisés"}
+
+Temps estimé par l'utilisateur :
+${data.estimatedTimeInput || "Non précisé"}
+
+Matériel, fournitures, produits ou livrables :
+${data.materials || "Non précisés"}
 
 Distance déplacement :
 ${data.travelDistance || "Non précisée"}
 
-Prestations demandées :
-${data.services.join(", ")}
+Catégories indicatives :
+${data.services.length ? data.services.join(", ") : "Aucune catégorie imposée"}
 
 Images fournies : ${data.images.length}
 
@@ -131,8 +151,10 @@ Structure attendue :
 3. positionnement marché France
 4. conseils professionnels
 5. tableau récapitulatif
-6. temps chantier estimé
+6. temps estimé
 7. estimation rentabilité
 8. email client prêt à envoyer
-9. données utiles pour transformer en devis`;
+9. données utiles pour transformer en devis ou facture
+
+Le champ businessContext doit expliquer en une phrase comment l'estimation a été adaptée au métier ou au type de prestation.`;
 }

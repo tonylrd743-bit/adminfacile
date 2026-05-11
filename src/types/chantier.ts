@@ -3,6 +3,7 @@ export type ChantierEstimateResult = {
   estimation: string;
   priceMin: number;
   priceMax: number;
+  businessContext: string;
   estimatedTime: string;
   profitability: string;
   difficulty: "Faible" | "Moyenne" | "Élevée" | "Complexe";

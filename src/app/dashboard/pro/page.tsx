@@ -21,11 +21,11 @@ export default function DashboardProPage() {
             </span>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-xl font-semibold text-slate-950">Simulateur de chantier IA</h2>
+                <h2 className="text-xl font-semibold text-slate-950">Simulateur de prestation IA</h2>
                 <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-bold text-white">Nouveau</span>
               </div>
               <p className="mt-2 max-w-2xl leading-7 text-slate-700">
-                Analysez photos, dimensions et prestations pour obtenir une estimation chantier réaliste et transformable en devis.
+                Analysez une prestation, ses contraintes, son temps, ses fournitures et son contexte métier pour obtenir une estimation transformable en devis.
               </p>
             </div>
           </div>

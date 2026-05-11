@@ -8,16 +8,17 @@ import { popularRequestCategories, popularRequestTemplates } from "@/data/popula
 import type { PopularRequestTemplate } from "@/data/popular-requests";
 
 const categoryDescriptions: Record<string, string> = {
-  "France Travail": "Creation d'entreprise, allocations, rendez-vous conseiller et contestations.",
-  CAF: "RSA, prime d'activite, APL, changements de situation et trop-percus.",
-  "URSSAF / Micro-entrepreneur": "Cotisations, declarations, attestations et regularisation de compte.",
-  Logement: "Logement social, proprietaire, caution, loyer et attestations.",
-  "CPAM / Sante": "Remboursements, droits, CSS et changements de situation sante.",
-  Impots: "Delais de paiement, contestations, remises et corrections fiscales.",
-  Banque: "Frais, virements, cloture de compte, prelevements et credit.",
-  "Employeur / Travail": "Attestations, salaire, rupture conventionnelle, demission et conges.",
-  "Prefecture / ANTS": "Titre de sejour, carte grise, permis, passeport et CNI.",
-  Retraite: "Releve de carriere, correction, rendez-vous, pension et reversion."
+  "France Travail": "Création d'entreprise, allocations, rendez-vous conseiller et contestations.",
+  CAF: "RSA, prime d'activité, APL, changements de situation et trop-perçus.",
+  "URSSAF / Micro-entrepreneur": "Cotisations, déclarations, attestations et régularisation de compte.",
+  Logement: "Logement social, propriétaire, caution, loyer et attestations.",
+  "CPAM / Santé": "Remboursements, droits, CSS et changements de situation santé.",
+  Impôts: "Délais de paiement, contestations, remises et corrections fiscales.",
+  Banque: "Frais, virements, clôture de compte, prélèvements et crédit.",
+  "Employeur / Travail": "Attestations, salaire, rupture conventionnelle, démission et congés.",
+  "Entreprise / Clients": "Devis, facture impayée, demande de documents, litige client et administratif professionnel.",
+  "Préfecture / ANTS": "Titre de séjour, carte grise, permis, passeport et CNI.",
+  Retraite: "Relevé de carrière, correction, rendez-vous, pension et réversion."
 };
 
 export function PopularRequestTemplates({

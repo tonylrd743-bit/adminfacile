@@ -39,6 +39,7 @@ type ProValues = {
   validUntil: string;
   dueDate: string;
   service: string;
+  unit: string;
   quantity: string;
   unitPrice: string;
   discount: string;
@@ -221,6 +222,7 @@ export function ProDemoTools() {
             <FieldGroup title="Prestation">
               <Input label="Description" name="service" onChange={updateValue} value={values.service} />
               <Input label="Quantité" name="quantity" onChange={updateValue} type="number" value={values.quantity} />
+              <Input label="Unité" name="unit" onChange={updateValue} value={values.unit} />
               <Input label="Prix unitaire HT" name="unitPrice" onChange={updateValue} type="number" value={values.unitPrice} />
               <Input label="Remise %" name="discount" onChange={updateValue} type="number" value={values.discount} />
               <Input label="TVA %" name="vatRate" onChange={updateValue} type="number" value={values.vatRate} />
@@ -329,6 +331,7 @@ function BusinessDocumentPreview({ kind, values, totals }: { kind: ProToolId; va
             <tr>
               <th className="px-4 py-3 text-left font-semibold">Description</th>
               <th className="px-4 py-3 text-right font-semibold">Quantité</th>
+              <th className="px-4 py-3 text-right font-semibold">Unité</th>
               <th className="px-4 py-3 text-right font-semibold">Prix HT</th>
               <th className="px-4 py-3 text-right font-semibold">Remise</th>
               <th className="px-4 py-3 text-right font-semibold">Montant HT</th>
@@ -338,6 +341,7 @@ function BusinessDocumentPreview({ kind, values, totals }: { kind: ProToolId; va
             <tr className="border-b border-slate-200">
               <td className="px-4 py-4 text-slate-800">{values.service}</td>
               <td className="px-4 py-4 text-right text-slate-700">{values.quantity}</td>
+              <td className="px-4 py-4 text-right text-slate-700">{values.unit}</td>
               <td className="px-4 py-4 text-right text-slate-700">{formatEuro(totals.unitPrice)}</td>
               <td className="px-4 py-4 text-right text-slate-700">{values.discount || "0"} %</td>
               <td className="px-4 py-4 text-right font-semibold text-slate-950">{formatEuro(totals.discountedHt)}</td>
@@ -351,6 +355,7 @@ function BusinessDocumentPreview({ kind, values, totals }: { kind: ProToolId; va
           <p className="font-semibold text-slate-950">{isInvoice ? "Mode de paiement" : "Conditions"}</p>
           <p className="mt-2">{values.paymentTerms}</p>
           <p className="mt-4 whitespace-pre-wrap">{values.details}</p>
+          <p className="mt-4 text-xs text-slate-500">{getVatMention(values.vatRate)}</p>
           <p className="mt-4 italic">Bon pour accord, date et signature :</p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm">
@@ -430,6 +435,7 @@ function createInitialValues(toolId: ProToolId): ProValues {
     validUntil: toInputDate(future),
     dueDate: toInputDate(due),
     service: "Prestation administrative professionnelle",
+    unit: "forfait",
     quantity: "1",
     unitPrice: "450",
     discount: "0",
@@ -477,7 +483,7 @@ function buildBody(tool: ProTool, values: ProValues, totals: ReturnType<typeof c
   if (tool.id === "quote" || tool.id === "invoice") {
     return `${tool.id === "invoice" ? "FACTURE" : "DEVIS"} ${values.documentNumber}
 
-Emetteur :
+Émetteur :
 ${values.companyName}
 ${values.companyAddress}
 ${values.companySiret}
@@ -489,7 +495,8 @@ ${values.clientAddress}
 
 Prestation :
 - ${values.service}
-- Quantite : ${values.quantity}
+- Quantité : ${values.quantity}
+- Unité : ${values.unit}
 - Prix unitaire HT : ${formatEuro(totals.unitPrice)}
 - Remise : ${values.discount || "0"} %
 - Total HT : ${formatEuro(totals.discountedHt)}
@@ -498,6 +505,8 @@ Prestation :
 
 Conditions :
 ${values.paymentTerms}
+
+${getVatMention(values.vatRate)}
 
 ${values.details}`;
   }
@@ -629,8 +638,9 @@ function drawBusinessPdf(doc: jsPDF, tool: ProTool, values: ProValues, totals: R
   doc.setFontSize(8);
   doc.text("DESCRIPTION", margin + 3, y + 7);
   doc.text("QTE", 108, y + 7, { align: "right" });
-  doc.text("PRIX HT", 135, y + 7, { align: "right" });
-  doc.text("REMISE", 160, y + 7, { align: "right" });
+  doc.text("UNITE", 128, y + 7, { align: "right" });
+  doc.text("PRIX HT", 150, y + 7, { align: "right" });
+  doc.text("REMISE", 170, y + 7, { align: "right" });
   doc.text("MONTANT HT", width - margin - 3, y + 7, { align: "right" });
 
   y += 18;
@@ -639,8 +649,9 @@ function drawBusinessPdf(doc: jsPDF, tool: ProTool, values: ProValues, totals: R
   doc.setFontSize(9);
   doc.text(split(doc, values.service, 78), margin + 3, y);
   doc.text(String(values.quantity), 108, y, { align: "right" });
-  doc.text(formatEuro(totals.unitPrice), 135, y, { align: "right" });
-  doc.text(`${values.discount || "0"} %`, 160, y, { align: "right" });
+  doc.text(values.unit || "-", 128, y, { align: "right" });
+  doc.text(formatEuro(totals.unitPrice), 150, y, { align: "right" });
+  doc.text(`${values.discount || "0"} %`, 170, y, { align: "right" });
   doc.text(formatEuro(totals.discountedHt), width - margin - 3, y, { align: "right" });
 
   y += 14;
@@ -661,7 +672,7 @@ function drawBusinessPdf(doc: jsPDF, tool: ProTool, values: ProValues, totals: R
   y += 18;
   doc.setFontSize(9);
   doc.setFont("helvetica", "italic");
-  doc.text(split(doc, `${values.paymentTerms}\n${values.details}\n\nBon pour accord, date et signature :`, width - margin * 2), margin, y);
+  doc.text(split(doc, `${values.paymentTerms}\n${getVatMention(values.vatRate)}\n${values.details}\n\nBon pour accord, date et signature :`, width - margin * 2), margin, y);
 }
 
 function drawTextPdf(doc: jsPDF, result: DemoResult) {
@@ -714,4 +725,12 @@ function formatDateForDisplay(value: string) {
 
 function formatEuro(value: number) {
   return new Intl.NumberFormat("fr-FR", { currency: "EUR", style: "currency" }).format(value || 0);
+}
+
+function getVatMention(vatRate: string) {
+  const rate = Number(vatRate || 0);
+  if (rate <= 0) {
+    return "TVA non applicable ou exonération à vérifier selon votre statut. Pour les micro-entrepreneurs : article 293 B du CGI si applicable.";
+  }
+  return `TVA applicable au taux de ${rate} %. Vérifiez le taux et les mentions obligatoires selon votre activité.`;
 }

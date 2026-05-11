@@ -6,24 +6,29 @@ import type { jsPDF } from "jspdf";
 import { Button } from "@/components/button";
 import type { ChantierEstimateResult } from "@/types/chantier";
 
-const services = [
-  "Tonte",
-  "Taille de haie",
-  "Nettoyage façade",
-  "Débroussaillage",
-  "Évacuation déchets",
-  "Karcher",
-  "Terrassement",
-  "Élagage",
-  "Nettoyage terrasse",
-  "Remise en état"
+const serviceCategories = [
+  "Bâtiment",
+  "Nettoyage",
+  "Jardinage",
+  "Consulting",
+  "Digital",
+  "Livraison",
+  "Dépannage",
+  "Coaching",
+  "Administratif",
+  "Commerce",
+  "Autre"
 ];
 
 export function ChantierSimulator() {
   const [description, setDescription] = useState("");
+  const [serviceType, setServiceType] = useState("");
+  const [businessActivity, setBusinessActivity] = useState("");
   const [dimensions, setDimensions] = useState("");
+  const [estimatedTimeInput, setEstimatedTimeInput] = useState("");
+  const [materials, setMaterials] = useState("");
   const [travelDistance, setTravelDistance] = useState("");
-  const [selectedServices, setSelectedServices] = useState<string[]>(["Taille de haie"]);
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [images, setImages] = useState<string[]>([]);
   const [result, setResult] = useState<ChantierEstimateResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -31,7 +36,7 @@ export function ChantierSimulator() {
   const [error, setError] = useState<string | null>(null);
 
   const emailLinks = useMemo(() => {
-    const subject = encodeURIComponent(result?.emailSubject ?? "Estimation chantier");
+    const subject = encodeURIComponent(result?.emailSubject ?? "Estimation de prestation");
     const body = encodeURIComponent(result?.emailBody ?? "");
     return {
       gmailUrl: `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`,
@@ -60,11 +65,21 @@ export function ChantierSimulator() {
       const response = await fetch("/api/chantier/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description, dimensions, travelDistance, services: selectedServices, images })
+        body: JSON.stringify({
+          description,
+          serviceType,
+          businessActivity,
+          dimensions,
+          estimatedTimeInput,
+          materials,
+          travelDistance,
+          services: selectedServices,
+          images
+        })
       });
       const data = (await response.json().catch(() => ({}))) as ChantierEstimateResult & { error?: string };
       if (!response.ok) {
-        setError(data.error ?? "Impossible d'analyser le chantier pour le moment.");
+        setError(data.error ?? "Impossible d'analyser la prestation pour le moment.");
         return;
       }
       setResult(data);
@@ -97,7 +112,7 @@ export function ChantierSimulator() {
     doc.setFontSize(18);
     doc.text("AdminFacile Pro", margin + 8, y + 12);
     doc.setFontSize(10);
-    doc.text("Estimation chantier indicative", margin + 8, y + 22);
+    doc.text("Estimation de prestation indicative", margin + 8, y + 22);
     y += 46;
 
     writeTitle(doc, "Estimation globale", margin, y);
@@ -108,12 +123,13 @@ export function ChantierSimulator() {
     doc.text(result.estimation, margin, y);
     y += 14;
 
+    y = writeBlock(doc, "Adaptation métier", result.businessContext, margin, y, width);
     y = writeBlock(doc, "Résumé professionnel", result.summary, margin, y, width);
     y = writeList(doc, "Pourquoi ce prix", result.whyThisPrice, margin, y, width);
     y = writeBlock(doc, "Positionnement marché France", result.marketPosition, margin, y, width);
     y = writeList(doc, "Conseils professionnels", result.professionalAdvice, margin, y, width);
 
-    doc.save("adminfacile-estimation-chantier.pdf");
+    doc.save("adminfacile-estimation-prestation.pdf");
   }
 
   function createQuote() {
@@ -124,7 +140,8 @@ export function ChantierSimulator() {
         service: result.quoteService,
         unitPrice: String(Math.round((result.priceMin + result.priceMax) / 2)),
         details: result.quoteDetails,
-        clientName: "Client chantier"
+        clientName: "Client",
+        unit: "forfait"
       })
     );
     window.location.href = "/dashboard/pro";
@@ -134,59 +151,98 @@ export function ChantierSimulator() {
     <div className="space-y-8">
       <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-          <p className="text-sm font-semibold uppercase text-blue-600">Analyse chantier</p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Informations terrain</h2>
+          <p className="text-sm font-semibold uppercase text-blue-600">Analyse professionnelle</p>
+          <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Informations de prestation</h2>
           <p className="mt-2 leading-7 text-slate-600">
-            Ajoutez les dimensions, les prestations et jusqu'à quatre photos pour obtenir une estimation indicative cohérente.
+            Décrivez une mission, une intervention ou un projet client. Les photos, dimensions, temps et fournitures restent optionnels.
           </p>
 
           <div className="mt-6 space-y-5">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="block space-y-2 text-sm font-semibold text-slate-800">
+                Métier ou activité
+                <input
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                  onChange={(event) => setBusinessActivity(event.target.value)}
+                  placeholder="Ex : plaquiste, consultant RH, nettoyage, développeur web"
+                  value={businessActivity}
+                />
+              </label>
+              <label className="block space-y-2 text-sm font-semibold text-slate-800">
+                Type de prestation
+                <input
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                  onChange={(event) => setServiceType(event.target.value)}
+                  placeholder="Ex : intervention, mission, livraison, conseil, travaux"
+                  value={serviceType}
+                />
+              </label>
+            </div>
+
             <label className="block space-y-2 text-sm font-semibold text-slate-800">
-              Photos du chantier
+              Photos optionnelles
               <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-5">
                 <input accept="image/*" multiple onChange={(event) => onImagesChange(event.target.files)} type="file" />
                 <div className="mt-3 flex items-center gap-2 text-sm text-slate-600">
                   <ImageUp className="h-4 w-4" />
-                  {images.length ? `${images.length} photo(s) ajoutée(s)` : "Photos optionnelles, utiles pour juger volume et accès."}
+                  {images.length ? `${images.length} photo(s) ajoutée(s)` : "Utile pour évaluer l'état, le volume, l'accès ou les contraintes visibles."}
                 </div>
               </div>
             </label>
 
             <label className="block space-y-2 text-sm font-semibold text-slate-800">
-              Description chantier
+              Description libre
               <textarea
                 className="min-h-36 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 onChange={(event) => setDescription(event.target.value)}
-                placeholder="Ex : haie de laurier de 25 m de long, 4 m de large et 5 m de haut, avec mur de 150 m à nettoyer au karcher."
+                placeholder="Ex : mission de conseil de 3 jours avec audit, livrables et restitution ; nettoyage de bureaux de 120 m² ; pose de cloisons ; intervention de dépannage urgente."
                 value={description}
               />
             </label>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block space-y-2 text-sm font-semibold text-slate-800">
-                Dimensions
+                Dimensions ou quantités
                 <input
                   className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                   onChange={(event) => setDimensions(event.target.value)}
-                  placeholder="Longueur, hauteur, surface, volume..."
+                  placeholder="Surface, mètres linéaires, unités, volume, livrables..."
                   value={dimensions}
                 />
               </label>
               <label className="block space-y-2 text-sm font-semibold text-slate-800">
-                Distance déplacement
+                Temps estimé
+                <input
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                  onChange={(event) => setEstimatedTimeInput(event.target.value)}
+                  placeholder="Ex : 4 h, 2 jours, 3 semaines"
+                  value={estimatedTimeInput}
+                />
+              </label>
+              <label className="block space-y-2 text-sm font-semibold text-slate-800">
+                Matériel, produits ou livrables
+                <input
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                  onChange={(event) => setMaterials(event.target.value)}
+                  placeholder="Fournitures, produits, outils, sous-traitance, livrables..."
+                  value={materials}
+                />
+              </label>
+              <label className="block space-y-2 text-sm font-semibold text-slate-800">
+                Déplacement
                 <input
                   className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                   onChange={(event) => setTravelDistance(event.target.value)}
-                  placeholder="Ex : 18 km aller"
+                  placeholder="Ex : 18 km aller, intervention sur site, à distance"
                   value={travelDistance}
                 />
               </label>
             </div>
 
             <div>
-              <p className="text-sm font-semibold text-slate-800">Prestations</p>
+              <p className="text-sm font-semibold text-slate-800">Catégories indicatives</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                {services.map((service) => (
+                {serviceCategories.map((service) => (
                   <button
                     className={[
                       "min-h-11 rounded-full border px-4 text-sm font-semibold transition",
@@ -208,7 +264,7 @@ export function ChantierSimulator() {
           {error ? <p className="mt-5 rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p> : null}
           <Button className="mt-6 w-full" disabled={loading} onClick={analyze} type="button">
             <Sparkles className={loading ? "h-4 w-4 animate-spin" : "h-4 w-4"} />
-            {loading ? "Analyse en cours..." : "Analyser le chantier"}
+            {loading ? "Analyse en cours..." : "Analyser la prestation"}
           </Button>
         </div>
 
@@ -244,9 +300,9 @@ function ResultPanel({
     return (
       <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <p className="text-sm font-semibold uppercase text-blue-600">Résultat</p>
-        <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Estimation chantier</h2>
+        <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Estimation de prestation</h2>
         <div className="mt-5 rounded-3xl bg-slate-50 p-6 leading-7 text-slate-600 ring-1 ring-slate-100">
-          L'estimation s'affichera ici avec un prix conseillé, une explication professionnelle, un tableau récapitulatif et des conseils de rentabilité.
+          L'estimation s'affichera ici avec un prix conseillé, une justification professionnelle, un récapitulatif et des conseils de rentabilité adaptés au métier.
         </div>
       </section>
     );
@@ -260,6 +316,11 @@ function ResultPanel({
         <p className="text-sm font-semibold text-blue-200">Estimation conseillée</p>
         <p className="mt-2 text-3xl font-semibold tracking-tight">{result.estimation}</p>
         <p className="mt-3 leading-7 text-slate-300">{result.summary}</p>
+      </div>
+
+      <div className="mt-5 rounded-3xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-950">
+        <p className="font-semibold">Adaptation métier</p>
+        <p className="mt-1">{result.businessContext}</p>
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
@@ -302,15 +363,15 @@ function ResultPanel({
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         <Button className="w-full" onClick={onCopy} type="button" variant="outline">
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-          {copied ? "Estimation copiée" : "Copier estimation"}
+          {copied ? "Estimation copiée" : "Copier l'estimation"}
         </Button>
         <Button className="w-full" onClick={onDownload} type="button">
           <Download className="h-4 w-4" />
-          Télécharger estimation PDF
+          Télécharger le PDF
         </Button>
         <a className="focus-ring inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-50" href={emailLinks.mailtoUrl}>
           <Mail className="h-4 w-4" />
-          Préparer email client
+          Préparer l'email client
         </a>
         <a className="focus-ring inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800" href={emailLinks.gmailUrl} rel="noopener noreferrer" target="_blank">
           <ExternalLink className="h-4 w-4" />
@@ -354,6 +415,9 @@ function formatEstimate(result: ChantierEstimateResult) {
   return `${result.title}
 
 ${result.estimation}
+
+Adaptation métier :
+${result.businessContext}
 
 Résumé :
 ${result.summary}

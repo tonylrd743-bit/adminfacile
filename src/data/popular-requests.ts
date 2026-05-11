@@ -4,7 +4,7 @@ export type PopularRequestTemplate = {
   id: string;
   title: string;
   category: string;
-  badge?: "Populaire" | "Urgent" | "Micro-entrepreneur" | "Logement" | "Santé";
+  badge?: "Populaire" | "Urgent" | "Micro-entrepreneur" | "Logement" | "Santé" | "Pro";
   description: string;
   requestType: ProcedureId;
   promptTemplate: string;
@@ -21,6 +21,7 @@ export const popularRequestCategories = [
   "Impôts",
   "Banque",
   "Employeur / Travail",
+  "Entreprise / Clients",
   "Préfecture / ANTS",
   "Retraite"
 ] as const;
@@ -499,6 +500,67 @@ export const popularRequestTemplates: PopularRequestTemplate[] = [
       "Je souhaite demander un congé ou une absence.\nType de congé ou absence : (TYPE).\nDates demandées : (DATES).\nMotif si nécessaire : (EXPLIQUEZ).\nOrganisation prévue : (PRÉCISEZ SI UTILE).\nJe souhaite une demande claire et professionnelle.",
     requiredDocuments: ["Planning ou justificatif si nécessaire", "Contrat de travail", "Règles internes si disponibles"],
     emailSubjectTemplate: "Demande de congé ou absence - (DATES)"
+  },
+
+  {
+    id: "pro-demande-devis-client",
+    title: "Réponse à une demande de prix",
+    category: "Entreprise / Clients",
+    badge: "Pro",
+    description: "Répondre à un prospect avec un cadrage clair avant devis.",
+    requestType: "contestation",
+    promptTemplate:
+      "Je souhaite répondre à une demande de prix client.\nMétier ou activité : (ACTIVITÉ).\nDemande du client : (DÉCRIVEZ).\nInformations manquantes : (LISTEZ).\nDélai souhaité : (DÉLAI).\nJe souhaite un email professionnel pour cadrer la demande et proposer la suite.",
+    requiredDocuments: ["Demande initiale du client", "Coordonnées client", "Liste des besoins", "Contraintes de délai", "Tarifs ou grille interne si disponible"],
+    emailSubjectTemplate: "Votre demande de prix - (NOM CLIENT)"
+  },
+  {
+    id: "pro-relance-facture-client",
+    title: "Relance facture impayée",
+    category: "Entreprise / Clients",
+    badge: "Pro",
+    description: "Préparer une relance sérieuse, progressive et exploitable.",
+    requestType: "contestation",
+    promptTemplate:
+      "Je souhaite relancer un client pour une facture impayée.\nNom du client : (NOM).\nNuméro de facture : (NUMÉRO).\nMontant TTC : (MONTANT).\nÉchéance : (DATE).\nRelances déjà effectuées : (DÉCRIVEZ).\nJe souhaite un message professionnel, ferme sans être agressif.",
+    requiredDocuments: ["Facture concernée", "Conditions de paiement", "Historique des relances", "Preuve de livraison ou prestation", "Coordonnées client"],
+    emailSubjectTemplate: "Relance facture (NUMÉRO) - (NOM ENTREPRISE)"
+  },
+  {
+    id: "pro-demande-documents-client",
+    title: "Demande de documents client",
+    category: "Entreprise / Clients",
+    badge: "Pro",
+    description: "Demander les pièces nécessaires pour avancer sur une mission.",
+    requestType: "contestation",
+    promptTemplate:
+      "Je souhaite demander des documents à un client pour avancer sur une mission.\nType de mission : (MISSION).\nDocuments attendus : (LISTE).\nDate limite souhaitée : (DATE).\nContexte : (EXPLIQUEZ).\nJe souhaite un email clair, professionnel et facile à comprendre.",
+    requiredDocuments: ["Liste des documents attendus", "Contrat ou devis si disponible", "Coordonnées client", "Échéance du dossier"],
+    emailSubjectTemplate: "Documents nécessaires pour votre dossier - (NOM CLIENT)"
+  },
+  {
+    id: "pro-litige-client",
+    title: "Litige client",
+    category: "Entreprise / Clients",
+    badge: "Pro",
+    description: "Structurer une réponse factuelle à un désaccord client.",
+    requestType: "contestation",
+    promptTemplate:
+      "Je souhaite répondre à un litige client.\nMétier ou activité : (ACTIVITÉ).\nObjet du litige : (DÉCRIVEZ).\nPosition du client : (RÉSUMEZ).\nMa position et preuves : (EXPLIQUEZ).\nObjectif souhaité : (ACCORD AMIABLE / RÈGLEMENT / CORRECTION / AUTRE).\nJe souhaite une réponse professionnelle, factuelle et prudente.",
+    requiredDocuments: ["Devis ou contrat", "Facture", "Échanges client", "Photos ou preuves", "Conditions générales si disponibles"],
+    emailSubjectTemplate: "Suite à votre retour - (DOSSIER / FACTURE)"
+  },
+  {
+    id: "pro-administratif-entreprise",
+    title: "Administratif entreprise",
+    category: "Entreprise / Clients",
+    badge: "Pro",
+    description: "Clarifier une démarche administrative liée à l'activité.",
+    requestType: "urssaf",
+    promptTemplate:
+      "Je souhaite structurer une démarche administrative pour mon entreprise.\nStatut : (MICRO-ENTREPRISE / SOCIÉTÉ / ASSOCIATION / AUTRE).\nActivité : (ACTIVITÉ).\nOrganisme concerné : (URSSAF / IMPÔTS / BANQUE / CLIENT / AUTRE).\nProblème ou objectif : (DÉCRIVEZ).\nDocuments disponibles : (LISTEZ).\nJe souhaite une synthèse, une checklist et un email prêt à relire.",
+    requiredDocuments: ["SIRET", "Derniers échanges", "Documents comptables ou administratifs", "Justificatifs utiles", "Coordonnées de l'organisme"],
+    emailSubjectTemplate: "Démarche administrative entreprise - (NOM ENTREPRISE)"
   },
 
   {

@@ -54,7 +54,7 @@ export default async function DashboardPage() {
           title="Mes dossiers"
         />
         <DashboardCard href="/dashboard/pro" icon={BriefcaseBusiness} text="Testez devis, factures, relances et emails business." title="Outils Pro" />
-        <DashboardCard href="/dashboard/simulateur-chantier" icon={Calculator} text="1 essai gratuit pour estimer un chantier." title="Simulateur chantier" />
+        <DashboardCard href="/dashboard/simulateur-chantier" icon={Calculator} text="1 essai gratuit pour estimer une prestation." title="Simulateur prestation" />
         <DashboardCard href="/dashboard/documents" icon={FolderLock} text="Centralisez vos justificatifs et documents utiles." title="Mes documents" />
         <DashboardCard href="/dashboard/account" icon={UserRound} text="Consultez vos informations de compte." title="Mon compte" />
       </section>
@@ -69,7 +69,7 @@ export default async function DashboardPage() {
               <p className="text-sm font-semibold uppercase text-blue-600">Essai Découverte</p>
               <h2 className="mt-1 text-xl font-semibold text-slate-950">Outils professionnels restants</h2>
               <div className="mt-4 grid gap-2 sm:grid-cols-3">
-                <UsagePill label="Chantier IA" value="1" />
+                <UsagePill label="Prestation IA" value="1" />
                 <UsagePill label="Devis" value="1" />
                 <UsagePill label="Email client" value="1" />
               </div>

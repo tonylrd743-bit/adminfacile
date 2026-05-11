@@ -7,9 +7,9 @@ export default function ChantierSimulatorPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase text-blue-200">Nouveau · Outils Pro</p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Simulateur de chantier IA</h1>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Simulateur de prestation IA</h1>
             <p className="mt-4 max-w-3xl leading-8 text-slate-300">
-              Analysez un chantier et obtenez une estimation réaliste selon les prix pratiqués en France.
+              Estimez une mission, une intervention, un projet client ou un service selon votre métier et les prix pratiqués en France.
             </p>
           </div>
           <span className="w-fit rounded-full bg-blue-600 px-4 py-2 text-sm font-bold">Nouveau</span>

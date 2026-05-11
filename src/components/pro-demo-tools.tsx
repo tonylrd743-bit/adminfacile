@@ -418,7 +418,7 @@ function createInitialValues(toolId: ProToolId): ProValues {
   const prefix = toolId === "invoice" ? "FAC" : "DEV";
   const number = `${prefix}-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}`;
 
-  return {
+  const values = {
     companyName: "AdminFacile Pro Services",
     companyAddress: "12 rue de la Gestion\n75009 Paris\nFrance",
     companySiret: "SIREN : 000 000 000",
@@ -438,6 +438,21 @@ function createInitialValues(toolId: ProToolId): ProValues {
     reminderLevel: "soft",
     details: "Document généré en mode démo. À relire, compléter et adapter avant tout envoi réel."
   };
+
+  if (toolId === "quote" && typeof window !== "undefined") {
+    const stored = sessionStorage.getItem("adminfacile:pro-quote");
+    if (stored) {
+      sessionStorage.removeItem("adminfacile:pro-quote");
+      try {
+        const parsed = JSON.parse(stored) as Partial<ProValues>;
+        return { ...values, ...parsed, documentNumber: values.documentNumber };
+      } catch {
+        return values;
+      }
+    }
+  }
+
+  return values;
 }
 
 function buildDemoResult(tool: ProTool, values: ProValues): DemoResult {

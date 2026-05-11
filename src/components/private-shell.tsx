@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BriefcaseBusiness, FilePlus2, FolderLock, LayoutDashboard, LibraryBig, UserRound } from "lucide-react";
+import { BriefcaseBusiness, Calculator, FilePlus2, FolderLock, LayoutDashboard, LibraryBig, UserRound } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -8,6 +8,7 @@ const nav = [
   { href: "/dashboard/new", label: "Nouvelle démarche", icon: FilePlus2 },
   { href: "/dashboard/prompts", label: "Prompts pré-écrits", icon: LibraryBig },
   { href: "/dashboard/pro", label: "Outils Pro", icon: BriefcaseBusiness },
+  { href: "/dashboard/simulateur-chantier", label: "Simulateur chantier", icon: Calculator },
   { href: "/dashboard/documents", label: "Mes documents", icon: FolderLock },
   { href: "/dashboard/account", label: "Mon compte", icon: UserRound }
 ];

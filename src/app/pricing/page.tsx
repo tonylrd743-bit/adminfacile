@@ -64,6 +64,7 @@ const proFeatures = [
   "Modèles ARCE entrepreneur",
   "Dashboard business",
   "Assistant entrepreneur IA",
+  "Simulateur chantier IA",
   "Futures automatisations IA"
 ];
 
@@ -84,7 +85,8 @@ const entrepreneurTools = [
   { title: "Préparer email client", icon: Mail },
   { title: "Réponse demande devis", icon: BriefcaseBusiness },
   { title: "Relance facture", icon: TimerReset },
-  { title: "Assistant administratif IA", icon: Sparkles }
+  { title: "Assistant administratif IA", icon: Sparkles },
+  { title: "Simulateur chantier IA", icon: BriefcaseBusiness }
 ];
 
 export default function PricingPage() {

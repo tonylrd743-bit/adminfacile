@@ -9,6 +9,7 @@ export default async function DashboardProPage() {
     data: { user }
   } = await supabase.auth.getUser();
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user!.id).single();
+  const initialDate = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="space-y-8">
@@ -42,7 +43,7 @@ export default async function DashboardProPage() {
         </div>
       </section>
 
-      <ProDemoTools profile={profile} />
+      <ProDemoTools initialDate={initialDate} profile={profile} />
     </div>
   );
 }

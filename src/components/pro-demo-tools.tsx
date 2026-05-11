@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BriefcaseBusiness,
   Check,
@@ -97,17 +97,36 @@ const tools: ProTool[] = [
   }
 ];
 
-export function ProDemoTools({ profile }: { profile?: ProfessionalProfile | null }) {
+export function ProDemoTools({ profile, initialDate }: { profile?: ProfessionalProfile | null; initialDate: string }) {
   const [selectedToolId, setSelectedToolId] = useState<ProToolId>("quote");
-  const [values, setValues] = useState<ProValues>(() => createInitialValues("quote", profile));
-  const [result, setResult] = useState<DemoResult>(() => buildDemoResult(tools[0], createInitialValues("quote", profile), profile));
+  const [values, setValues] = useState<ProValues>(() => createInitialValues("quote", profile, initialDate));
+  const [result, setResult] = useState<DemoResult>(() => {
+    const initialValues = createInitialValues("quote", profile, initialDate);
+    return buildDemoResult(tools[0], initialValues, profile);
+  });
   const [copied, setCopied] = useState(false);
   const selectedTool = tools.find((tool) => tool.id === selectedToolId) ?? tools[0];
   const totals = useMemo(() => calculateTotals(values), [values]);
   const emailLinks = useMemo(() => buildEmailLinks(result.subject, result.body), [result]);
 
+  useEffect(() => {
+    const stored = sessionStorage.getItem("adminfacile:pro-quote");
+    if (!stored) return;
+
+    sessionStorage.removeItem("adminfacile:pro-quote");
+    try {
+      const parsed = JSON.parse(stored) as Partial<ProValues>;
+      const nextValues = { ...createInitialValues("quote", profile, initialDate), ...parsed };
+      setSelectedToolId("quote");
+      setValues(nextValues);
+      setResult(buildDemoResult(tools[0], nextValues, profile));
+    } catch {
+      // Ignore invalid session payloads; the deterministic default remains valid.
+    }
+  }, [initialDate, profile]);
+
   function selectTool(tool: ProTool) {
-    const nextValues = createInitialValues(tool.id, profile);
+    const nextValues = createInitialValues(tool.id, profile, initialDate);
     setSelectedToolId(tool.id);
     setValues(nextValues);
     setResult(buildDemoResult(tool, nextValues, profile));
@@ -428,14 +447,12 @@ function InfoLine({ label, value, strong = false }: { label: string; value: stri
   );
 }
 
-function createInitialValues(toolId: ProToolId, profile?: ProfessionalProfile | null): ProValues {
-  const now = new Date();
-  const future = new Date(now);
-  future.setDate(now.getDate() + 30);
-  const due = new Date(now);
-  due.setDate(now.getDate() + 15);
+function createInitialValues(toolId: ProToolId, profile: ProfessionalProfile | null | undefined, initialDate: string): ProValues {
+  const now = parseInputDate(initialDate);
+  const future = addDays(now, 30);
+  const due = addDays(now, 15);
   const prefix = toolId === "invoice" ? "FAC" : "DEV";
-  const number = `${prefix}-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}`;
+  const number = `${prefix}-${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}${String(now.getUTCDate()).padStart(2, "0")}`;
 
   const values = {
     companyName: getProfileDisplayName(profile),
@@ -458,19 +475,6 @@ function createInitialValues(toolId: ProToolId, profile?: ProfessionalProfile | 
     reminderLevel: "soft",
     details: "Document généré en mode démo. À relire, compléter et adapter avant tout envoi réel."
   };
-
-  if (toolId === "quote" && typeof window !== "undefined") {
-    const stored = sessionStorage.getItem("adminfacile:pro-quote");
-    if (stored) {
-      sessionStorage.removeItem("adminfacile:pro-quote");
-      try {
-        const parsed = JSON.parse(stored) as Partial<ProValues>;
-        return { ...values, ...parsed, documentNumber: values.documentNumber };
-      } catch {
-        return values;
-      }
-    }
-  }
 
   return values;
 }
@@ -740,11 +744,14 @@ function toInputDate(date: Date) {
 
 function formatDateForDisplay(value: string) {
   if (!value) return "-";
-  return new Intl.DateTimeFormat("fr-FR").format(new Date(value));
+  const [year, month, day] = value.split("-");
+  if (!year || !month || !day) return value;
+  return `${day}/${month}/${year}`;
 }
 
 function formatEuro(value: number) {
-  return new Intl.NumberFormat("fr-FR", { currency: "EUR", style: "currency" }).format(value || 0);
+  const fixed = (value || 0).toFixed(2).replace(".", ",");
+  return `${fixed} €`;
 }
 
 function getVatMention(vatRate: string, profile?: ProfessionalProfile | null) {
@@ -754,4 +761,16 @@ function getVatMention(vatRate: string, profile?: ProfessionalProfile | null) {
     return "TVA non applicable ou exonération à vérifier selon votre statut. Pour les micro-entrepreneurs : article 293 B du CGI si applicable.";
   }
   return `TVA applicable au taux de ${rate} %. Vérifiez le taux et les mentions obligatoires selon votre activité.`;
+}
+
+function parseInputDate(value: string) {
+  const [year, month, day] = value.split("-").map(Number);
+  if (!year || !month || !day) return new Date(Date.UTC(2026, 0, 1));
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date);
+  next.setUTCDate(next.getUTCDate() + days);
+  return next;
 }

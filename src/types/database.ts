@@ -22,6 +22,10 @@ export type Database = {
           phone: string | null;
           logo_url: string | null;
           document_style: string;
+          subscription_status: "free" | "premium" | "pro" | "canceled" | "past_due";
+          stripe_customer_id: string | null;
+          stripe_subscription_id: string | null;
+          subscription_updated_at: string | null;
           updated_at: string;
           created_at: string;
         };
@@ -43,6 +47,10 @@ export type Database = {
           phone?: string | null;
           logo_url?: string | null;
           document_style?: string;
+          subscription_status?: "free" | "premium" | "pro" | "canceled" | "past_due";
+          stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
+          subscription_updated_at?: string | null;
           updated_at?: string;
           created_at?: string;
         };
@@ -63,6 +71,10 @@ export type Database = {
           phone?: string | null;
           logo_url?: string | null;
           document_style?: string;
+          subscription_status?: "free" | "premium" | "pro" | "canceled" | "past_due";
+          stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
+          subscription_updated_at?: string | null;
           updated_at?: string;
         };
         Relationships: [];

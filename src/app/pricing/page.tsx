@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  BriefcaseBusiness,
   Calculator,
   Check,
   FileText,
@@ -93,12 +92,7 @@ const plans = [
       ["Devis / factures", "Illimité"],
       ["Espace business", "Inclus"]
     ],
-    action: (
-      <ButtonLink className="w-full" href="/dashboard/pro" variant="secondary">
-        Tester la démo Pro
-        <BriefcaseBusiness className="h-4 w-4" />
-      </ButtonLink>
-    )
+    action: null
   }
 ];
 
@@ -122,6 +116,7 @@ const businessTools = [
 
 export default function PricingPage() {
   const premiumEnabled = isStripePlanConfigured("premium");
+  const proEnabled = isStripePlanConfigured("pro");
 
   return (
     <main className="bg-white">
@@ -149,6 +144,8 @@ export default function PricingPage() {
               action={
                 plan.name === "Premium" ? (
                   <CheckoutButton disabled={!premiumEnabled} label="Passer Premium" plan="premium" />
+                ) : plan.name === "Professionnel" ? (
+                  <CheckoutButton disabled={!proEnabled} label="Passer Professionnel" plan="pro" />
                 ) : (
                   plan.action
                 )

@@ -18,9 +18,17 @@ create table if not exists public.profiles (
   phone text,
   logo_url text,
   document_style text not null default 'sobre',
+  subscription_status text not null default 'free',
+  stripe_customer_id text,
+  stripe_subscription_id text,
+  subscription_updated_at timestamptz,
   updated_at timestamptz not null default now(),
   created_at timestamptz not null default now()
 );
+
+alter table public.profiles drop constraint if exists profiles_subscription_status_check;
+alter table public.profiles add constraint profiles_subscription_status_check
+  check (subscription_status in ('free', 'premium', 'pro', 'canceled', 'past_due'));
 
 create table if not exists public.requests (
   id uuid primary key default gen_random_uuid(),

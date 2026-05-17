@@ -117,9 +117,11 @@ export function ProDemoTools({ profile, initialDate }: { profile?: ProfessionalP
     try {
       const parsed = JSON.parse(stored) as Partial<ProValues>;
       const nextValues = { ...createInitialValues("quote", profile, initialDate), ...parsed };
-      setSelectedToolId("quote");
-      setValues(nextValues);
-      setResult(buildDemoResult(tools[0], nextValues, profile));
+      queueMicrotask(() => {
+        setSelectedToolId("quote");
+        setValues(nextValues);
+        setResult(buildDemoResult(tools[0], nextValues, profile));
+      });
     } catch {
       // Ignore invalid session payloads; the deterministic default remains valid.
     }

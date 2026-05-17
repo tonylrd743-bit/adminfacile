@@ -1,6 +1,8 @@
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 
-export function isStripePlanConfigured(plan: "complete" | "premium") {
+export type StripePlan = "complete" | "premium" | "pro";
+
+export function isStripePlanConfigured(plan: StripePlan) {
   const priceId = getStripePriceId(plan);
   return isStripeConfigured() && Boolean(priceId && !isDummyValue(priceId));
 }
@@ -12,9 +14,9 @@ export async function createCheckoutSession({
 }: {
   userId: string;
   email?: string;
-  plan: "complete" | "premium";
+  plan: StripePlan;
 }) {
-  const isSubscription = plan === "premium";
+  const isSubscription = plan === "premium" || plan === "pro";
   const priceId = getStripePriceId(plan);
 
   if (!priceId || isDummyValue(priceId)) {
@@ -30,12 +32,21 @@ export async function createCheckoutSession({
       user_id: userId,
       plan
     },
-    success_url: `${appUrl}/dashboard?checkout=success`,
+    subscription_data: isSubscription
+      ? {
+          metadata: {
+            user_id: userId,
+            plan
+          }
+        }
+      : undefined,
+    success_url: `${appUrl}/dashboard?checkout=success&plan=${plan}`,
     cancel_url: `${appUrl}/pricing?checkout=cancelled`
   });
 }
 
-function getStripePriceId(plan: "complete" | "premium") {
+function getStripePriceId(plan: StripePlan) {
+  if (plan === "pro") return process.env.STRIPE_PRICE_PRO;
   return plan === "premium" ? process.env.STRIPE_PRICE_PREMIUM : process.env.STRIPE_PRICE_COMPLETE;
 }
 

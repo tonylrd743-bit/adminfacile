@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { Footer } from "@/components/footer";
+import { GoogleTracking } from "@/components/google-tracking";
 import { Header } from "@/components/header";
 
 export const metadata: Metadata = {
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr">
       <body className="min-h-screen antialiased">
+        <GoogleTracking />
         <Header />
         {children}
         <Footer />

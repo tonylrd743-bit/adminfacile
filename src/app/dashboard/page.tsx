@@ -1,5 +1,6 @@
 import { BriefcaseBusiness, Calculator, Clock3, FilePlus2, Files, FolderLock, Gift, UserRound } from "lucide-react";
 import { ButtonLink } from "@/components/button";
+import { ConversionTracker } from "@/components/conversion-tracker";
 import { DashboardCard } from "@/components/dashboard-card";
 import { PdfButton } from "@/components/pdf-button";
 import { normalizeAiResult } from "@/lib/admin-result";
@@ -9,7 +10,12 @@ import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";
 import type { RequestFormData } from "@/types/adminfacile";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams
+}: {
+  searchParams?: Promise<{ checkout?: string; plan?: string }>;
+}) {
+  const params = await searchParams;
   const supabase = await createClient();
   const {
     data: { user }
@@ -24,6 +30,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-w-0 space-y-8">
+      <ConversionTracker checkout={params?.checkout} plan={params?.plan} />
       <section className="rounded-[2rem] bg-slate-950 p-5 text-white shadow-sm sm:p-8">
         <p className="text-sm font-semibold text-blue-200">Espace privé</p>
         <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">

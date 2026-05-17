@@ -4,7 +4,7 @@ import { createCheckoutSession } from "@/lib/stripe-checkout";
 import { createClient } from "@/lib/supabase/server";
 
 const checkoutSchema = z.object({
-  plan: z.enum(["complete", "premium"])
+  plan: z.enum(["complete", "premium", "pro"])
 });
 
 export async function POST(request: Request) {

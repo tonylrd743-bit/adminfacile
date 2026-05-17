@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/button";
 import { createClient } from "@/lib/supabase/browser";
+import { trackSignup } from "@/lib/tracking";
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const router = useRouter();
@@ -56,11 +57,13 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       }
 
       if (mode === "signup" && !response.data.session) {
+        trackSignup();
         setMessageType("success");
         setMessage("Compte créé. Confirmez votre email, puis vous serez redirigé vers le dashboard.");
         return;
       }
 
+      if (mode === "signup") trackSignup();
       router.push("/dashboard");
       router.refresh();
     } catch (error) {

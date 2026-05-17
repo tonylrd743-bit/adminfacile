@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { CreditCard, Lock } from "lucide-react";
 import { Button } from "@/components/button";
+import { trackCheckoutStarted } from "@/lib/tracking";
+import type { StripePlan } from "@/lib/stripe-checkout";
 
 export function CheckoutButton({
   plan,
   label,
   disabled = false
 }: {
-  plan: "complete" | "premium";
+  plan: StripePlan;
   label: string;
   disabled?: boolean;
 }) {
@@ -24,6 +26,7 @@ export function CheckoutButton({
 
     setLoading(true);
     setMessage(null);
+    trackCheckoutStarted(plan);
     const response = await fetch("/api/stripe/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

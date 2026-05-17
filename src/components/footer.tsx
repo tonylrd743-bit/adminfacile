@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { DisclaimerBox } from "@/components/disclaimer-box";
 import { ButtonLink } from "@/components/button";
+import { TrackedLink } from "@/components/tracked-link";
 
 export function Footer() {
   return (
@@ -17,9 +18,9 @@ export function Footer() {
             Un assistant professionnel pour préparer vos démarches administratives, vos courriers et vos documents business avec plus de clarté.
           </p>
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href="mailto:contactadminfacile@gmail.com" variant="outline">
+            <TrackedLink href="mailto:contactadminfacile@gmail.com" tracking="contact" trackingPage="footer" variant="outline">
               Nous contacter
-            </ButtonLink>
+            </TrackedLink>
             <ButtonLink href="/affiliation" variant="ghost">
               Programme ambassadeur
             </ButtonLink>

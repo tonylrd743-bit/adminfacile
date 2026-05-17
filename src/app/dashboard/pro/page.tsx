@@ -1,7 +1,9 @@
 import { ProDemoTools } from "@/components/pro-demo-tools";
 import { ButtonLink } from "@/components/button";
+import { CheckoutButton } from "@/components/checkout-button";
+import { getProAccessDateLabel, hasProAccess, isProPaidAccessActive } from "@/lib/pro-access";
 import { createClient } from "@/lib/supabase/server";
-import { Calculator } from "lucide-react";
+import { Calculator, LockKeyhole } from "lucide-react";
 
 export default async function DashboardProPage() {
   const supabase = await createClient();
@@ -10,14 +12,56 @@ export default async function DashboardProPage() {
   } = await supabase.auth.getUser();
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user!.id).single();
   const initialDate = new Date().toISOString().slice(0, 10);
+  const paidAccessActive = isProPaidAccessActive();
+  const userHasProAccess = hasProAccess(profile);
+
+  if (!userHasProAccess) {
+    return (
+      <div className="space-y-8">
+        <section className="rounded-[2rem] bg-slate-950 p-6 text-white shadow-sm sm:p-8">
+          <p className="text-sm font-semibold uppercase text-blue-200">Offre Professionnel</p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Cette fonctionnalité nécessite l'offre Professionnel.</h1>
+          <p className="mt-4 max-w-3xl leading-8 text-slate-300">
+            L'accès aux outils entrepreneur, factures, devis illimités, relances clients, assistant IA Pro et automatisations futures est réservé à l'offre Professionnel.
+          </p>
+        </section>
+
+        <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex gap-4">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white">
+                <LockKeyhole className="h-5 w-5" />
+              </span>
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Professionnel - 29,99€/mois</h2>
+                <p className="mt-2 max-w-2xl leading-7 text-slate-600">
+                  Passez Professionnel pour débloquer l'espace Pro complet à partir du {getProAccessDateLabel()}.
+                </p>
+              </div>
+            </div>
+            <div className="w-full sm:w-64">
+              <CheckoutButton label="Passer Professionnel" plan="pro" />
+            </div>
+          </div>
+          <div className="mt-5">
+            <ButtonLink href="/dashboard/pro-demo" variant="outline">
+              Voir la démo limitée
+            </ButtonLink>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
       <section className="rounded-[2rem] bg-slate-950 p-6 text-white shadow-sm sm:p-8">
-        <p className="text-sm font-semibold uppercase text-blue-200">Mode démo Professionnel</p>
+        <p className="text-sm font-semibold uppercase text-blue-200">{paidAccessActive ? "Offre Professionnel" : "Mode démo Professionnel"}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Outils Pro</h1>
         <p className="mt-4 max-w-3xl leading-8 text-slate-300">
-          Testez les futurs outils professionnels d'AdminFacile avant leur activation complète.
+          {paidAccessActive
+            ? "Votre accès Professionnel est actif : outils entrepreneur, factures, devis, relances et assistant IA Pro."
+            : `Accès démo disponible jusqu'au ${getProAccessDateLabel()}. Après cette date, l'offre Professionnel sera requise.`}
         </p>
       </section>
 
